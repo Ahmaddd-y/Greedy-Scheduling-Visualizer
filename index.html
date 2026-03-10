@@ -4,23 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Job Scheduling with Deadlines - Interactive Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f1317;
-      --panel: #171e24;
-      --panel-2: #1f2931;
-      --ink: #eaf2f7;
-      --muted: #9fb0bf;
-      --accent: #ffb703;
+      --bg: #000000;
+      --panel: #0c0c0c;
+      --panel-2: #161616;
+      --ink: #f0f0f0;
+      --muted: #888888;
+      --accent: #38bdf8;
       --good: #42d392;
       --warn: #ff6b6b;
       --busy: #4dabf7;
-      --line: #2d3a45;
-      --chip: #24303a;
-      --glow: rgba(255, 183, 3, 0.25);
+      --line: #222222;
+      --chip: #1a1a1a;
+      --glow: rgba(56, 189, 248, 0.25);
       --mono: "Courier New", "Menlo", monospace;
       --sans: "Avenir Next", "Segoe UI", sans-serif;
-      --serif: "Georgia", serif;
     }
 
     * {
@@ -28,17 +30,14 @@
     }
 
     *::selection {
-      background: rgba(77, 171, 247, 0.35);
+      background: rgba(255, 255, 255, 0.15);
       color: #ffffff;
     }
 
     body {
       margin: 0;
       font-family: var(--sans);
-      background:
-        radial-gradient(circle at 85% 14%, #1f2930 0%, transparent 35%),
-        radial-gradient(circle at 12% 80%, #1f2a33 0%, transparent 30%),
-        linear-gradient(160deg, #0f1317 0%, #111a20 45%, #0f151b 100%);
+      background: linear-gradient(160deg, #000000 0%, #0a0a0a 45%, #000000 100%);
       color: var(--ink);
       min-height: 100vh;
     }
@@ -68,19 +67,27 @@
     }
 
     .left, .right {
-      background: rgba(23, 30, 36, 0.94);
-      border: 1px solid var(--line);
+      background: linear-gradient(160deg, #111111 0%, #080808 60%, #000000 100%);
+      border: 1px solid #2a2a2a;
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 10px 34px rgba(0, 0, 0, 0.32);
+      box-shadow:
+        0 2px 0 rgba(255,255,255,0.04) inset,
+        0 -1px 0 rgba(0,0,0,0.8) inset,
+        0 16px 40px rgba(0,0,0,0.55),
+        0 4px 12px rgba(0,0,0,0.4);
       backdrop-filter: blur(3px);
       animation: panelIn 320ms ease both;
       transition: border-color 180ms ease, box-shadow 220ms ease;
     }
 
     .left:hover, .right:hover {
-      border-color: #3a4a57;
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.38);
+      border-color: #383838;
+      box-shadow:
+        0 2px 0 rgba(255,255,255,0.05) inset,
+        0 -1px 0 rgba(0,0,0,0.8) inset,
+        0 20px 48px rgba(0,0,0,0.6),
+        0 4px 14px rgba(56,189,248,0.06);
     }
 
     .section {
@@ -99,16 +106,17 @@
 
     h1 {
       margin: 0 0 4px;
-      font-size: 1.22rem;
-      font-family: var(--serif);
-      letter-spacing: 0.3px;
-      color: #ffe3a4;
+      font-size: 1.38rem;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      color: #38bdf8;
     }
 
     h2 {
       margin: 0 0 12px;
       font-size: 0.97rem;
-      color: #ffd89a;
+      color: #38bdf8;
       letter-spacing: 0.25px;
       display: inline-block;
       position: relative;
@@ -122,7 +130,7 @@
       bottom: 0;
       width: 100%;
       height: 1px;
-      background: linear-gradient(90deg, rgba(255, 183, 3, 0.8), rgba(255, 183, 3, 0));
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.8), rgba(56, 189, 248, 0));
     }
 
     p, li, label, summary {
@@ -137,9 +145,9 @@
 
     input[type="text"], input[type="number"], textarea {
       width: 100%;
-      background: #0f151b;
+      background: #000000;
       color: var(--ink);
-      border: 1px solid #384754;
+      border: 1px solid #2e2e2e;
       border-radius: 10px;
       padding: 9px 10px;
       font-size: 0.9rem;
@@ -156,11 +164,11 @@
     input[type="text"]:focus, textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 2px var(--glow);
-      background: #111a22;
+      background: #0c0c0c;
     }
 
     input::placeholder, textarea::placeholder {
-      color: #7f93a6;
+      color: #8a8a8a;
     }
 
     .btn-row {
@@ -172,8 +180,8 @@
 
     button {
       appearance: none;
-      border: 1px solid #3a4a57;
-      background: linear-gradient(180deg, #1f2a33 0%, #172028 100%);
+      border: 1px solid #303030;
+      background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
       color: var(--ink);
       padding: 8px 6px;
       border-radius: 9px;
@@ -187,21 +195,21 @@
 
     button:hover {
       transform: translateY(-1px);
-      border-color: #5c7080;
+      border-color: #444444;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 12px rgba(0, 0, 0, 0.22);
     }
 
     .preset-btn:hover {
       border-color: #7eb4ff;
       box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
-      background: linear-gradient(180deg, #243445 0%, #1a2835 100%);
+      background: linear-gradient(180deg, #202020 0%, #181818 100%);
     }
 
     .preset-btn.active {
-      border-color: #ffb703;
-      background: linear-gradient(180deg, #3a2d12 0%, #2c230f 100%);
-      color: #ffe5a8;
-      box-shadow: 0 0 0 2px rgba(255, 183, 3, 0.22);
+      border-color: #38bdf8;
+      background: linear-gradient(180deg, #0a2233 0%, #061a28 100%);
+      color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
       transform: translateY(-1px);
     }
 
@@ -232,7 +240,7 @@
 
     .chip {
       background: var(--chip);
-      border: 1px solid #395062;
+      border: 1px solid #303030;
       border-radius: 999px;
       padding: 3px 9px;
       display: inline-flex;
@@ -253,16 +261,16 @@
 
     .stat-card {
       background: var(--panel-2);
-      border: 1px solid #31404d;
+      border: 1px solid #2a2a2a;
       border-radius: 11px;
       padding: 10px 10px 8px;
       transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
     }
 
     .stat-card:hover {
-      border-color: #47607a;
+      border-color: #383838;
       transform: translateY(-1px);
-      background: #24323c;
+      background: #202020;
     }
 
     .stat-label {
@@ -276,7 +284,7 @@
     .stat-value {
       font-size: 1.12rem;
       font-weight: 700;
-      color: #f5f8fa;
+      color: #f5f5f5;
       font-family: var(--mono);
     }
 
@@ -291,17 +299,17 @@
       padding: 4px 8px;
       font-size: 0.76rem;
       border-radius: 999px;
-      border: 1px solid #3b4a57;
-      background: #1a252e;
+      border: 1px solid #303030;
+      background: #161616;
       font-family: var(--mono);
       color: var(--muted);
       transition: all 180ms ease;
     }
 
     .status-pill.active {
-      color: #0f1317;
-      background: #ffd07a;
-      border-color: #ffcf73;
+      color: #ffffff;
+      background: #38bdf8;
+      border-color: #38bdf8;
       font-weight: 700;
     }
 
@@ -315,15 +323,15 @@
       align-items: center;
       gap: 8px;
       padding: 8px 10px;
-      border: 1px solid #34424e;
+      border: 1px solid #2c2c2c;
       border-radius: 10px;
-      background: #121a22;
+      background: #0c0c0c;
       transition: border-color 180ms ease, background 180ms ease;
     }
 
     .toggle-row:hover {
-      border-color: #4b5f6f;
-      background: #15202a;
+      border-color: #3a3a3a;
+      background: #111111;
     }
 
     .toggle-row input[type="checkbox"] {
@@ -349,8 +357,8 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      background: #1a232b;
-      border: 1px solid #33424e;
+      background: #161616;
+      border: 1px solid #2c2c2c;
       border-radius: 999px;
       padding: 4px 9px;
       color: var(--muted);
@@ -359,7 +367,7 @@
     }
 
     .legend-item:hover {
-      border-color: #4f6678;
+      border-color: #3c3c3c;
       transform: translateY(-1px);
     }
 
@@ -371,10 +379,10 @@
       height: 16px;
       padding: 0 4px;
       border-radius: 5px;
-      border: 1px solid #7d95a6;
+      border: 1px solid #888888;
       font-size: 0.7rem;
-      color: #ffe2a8;
-      background: #1f2a33;
+      color: #38bdf8;
+      background: #1a1a1a;
       font-family: var(--mono);
       font-weight: 700;
     }
@@ -383,16 +391,22 @@
       width: 11px;
       height: 11px;
       border-radius: 2px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(56, 189, 248, 0.35);
     }
 
     #vizSvg {
       width: 100%;
-      height: 370px;
-      background: linear-gradient(180deg, #111920 0%, #0e151b 100%);
-      border: 1px solid #2f3d48;
+      height: 420px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.04) 0%, transparent 60%),
+        linear-gradient(180deg, #141414 0%, #080808 50%, #000000 100%);
+      border: 1px solid #303030;
+      border-top: 1px solid #3a3a3a;
       border-radius: 12px;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        inset 0 -1px 0 rgba(0,0,0,0.5),
+        0 4px 20px rgba(0,0,0,0.5);
     }
 
     .slot {
@@ -422,12 +436,12 @@
     }
 
     .history-wrap {
-      border: 1px solid #2f3d48;
+      border: 1px solid #282828;
       border-radius: 10px;
       overflow: hidden;
       max-height: 260px;
       overflow-y: auto;
-      background: #121921;
+      background: #0c0c0c;
     }
 
     .history-wrap::-webkit-scrollbar,
@@ -438,20 +452,20 @@
 
     .history-wrap::-webkit-scrollbar-track,
     .pseudo-panel::-webkit-scrollbar-track {
-      background: #10171e;
+      background: #080808;
       border-radius: 8px;
     }
 
     .history-wrap::-webkit-scrollbar-thumb,
     .pseudo-panel::-webkit-scrollbar-thumb {
-      background: #2d3e4c;
+      background: #262626;
       border-radius: 8px;
-      border: 1px solid #425666;
+      border: 1px solid #363636;
     }
 
     .history-wrap::-webkit-scrollbar-thumb:hover,
     .pseudo-panel::-webkit-scrollbar-thumb:hover {
-      background: #3c5365;
+      background: #323232;
     }
 
     table {
@@ -461,7 +475,7 @@
     }
 
     th, td {
-      border-bottom: 1px solid #26323d;
+      border-bottom: 1px solid #222222;
       padding: 7px 7px;
       text-align: left;
     }
@@ -472,16 +486,16 @@
 
     tr.row-assign td:nth-child(2) { color: #42d392; font-weight: 600; }
     tr.row-discard td:nth-child(2) { color: #ff6b6b; font-weight: 600; }
-    tr.row-sort td:nth-child(2) { color: #ffb703; font-weight: 600; }
-    tr.row-check td:nth-child(2) { color: #9ecff5; }
+    tr.row-sort td:nth-child(2) { color: #38bdf8; font-weight: 600; }
+    tr.row-check td:nth-child(2) { color: #c0c0c0; }
 
-    .cplx-table th { position: static !important; background: #1e2c38 !important; }
+    .cplx-table th { position: static !important; background: #1a1a1a !important; }
 
     th {
       position: sticky;
       top: 0;
-      background: #1c2630;
-      color: #ffe3a4;
+      background: #181818;
+      color: #38bdf8;
       z-index: 1;
       font-size: 0.72rem;
       text-transform: uppercase;
@@ -493,19 +507,19 @@
     }
 
     tr[data-step]:hover {
-      background: #1a2530;
+      background: #161616;
     }
 
     .current-row {
-      background: #253140;
+      background: #212121;
     }
 
     .pseudo-panel {
       max-height: 265px;
       overflow: auto;
-      border: 1px solid #2d3a45;
+      border: 1px solid #262626;
       border-radius: 10px;
-      background: #111821;
+      background: #0c0c0c;
       font-family: var(--mono);
       font-size: 0.83rem;
       padding: 6px 0;
@@ -516,57 +530,57 @@
       grid-template-columns: 34px 1fr;
       gap: 8px;
       padding: 5px 12px;
-      color: #cbd7e0;
+      color: #cacaca;
       border-left: 3px solid transparent;
       transition: background 140ms ease, border-left-color 140ms ease;
     }
 
     .code-line:hover {
-      background: rgba(77, 171, 247, 0.08);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .code-line .ln {
-      color: #7f93a6;
+      color: #8a8a8a;
       text-align: right;
       user-select: none;
     }
 
     .code-line.active {
-      background: rgba(255, 183, 3, 0.14);
-      border-left-color: #ffb703;
-      color: #fff2cc;
+      background: rgba(56, 189, 248, 0.1);
+      border-left-color: #38bdf8;
+      color: #f0f0f0;
     }
 
     .explain {
       min-height: 88px;
-      border: 1px solid #2f3d48;
+      border: 1px solid #282828;
       border-radius: 10px;
       padding: 11px 12px;
-      background: #111821;
-      color: #dce7f0;
+      background: #0c0c0c;
+      color: #d8d8d8;
       line-height: 1.55;
       font-size: 0.91rem;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
     }
 
     details {
-      border: 1px solid #2f3d48;
+      border: 1px solid #282828;
       border-radius: 11px;
       padding: 10px 12px;
-      background: #131b23;
+      background: #0e0e0e;
       margin-bottom: 10px;
       transition: border-color 180ms ease, background 180ms ease;
     }
 
     details:hover {
-      border-color: #3f4f5d;
-      background: #15202a;
+      border-color: #323232;
+      background: #111111;
     }
 
     summary {
       cursor: pointer;
       font-weight: 700;
-      color: #ffdfa2;
+      color: #38bdf8;
     }
 
     .concept-grid {
@@ -576,8 +590,8 @@
     }
 
     .concept-box {
-      border: 1px solid #2d3a45;
-      background: #111821;
+      border: 1px solid #262626;
+      background: #0c0c0c;
       border-left: 4px solid #4dabf7;
       border-radius: 10px;
       padding: 10px 12px;
@@ -587,7 +601,7 @@
 
     .concept-box:hover {
       transform: translateY(-1px);
-      border-color: #46627a;
+      border-color: #383838;
     }
 
     .concept-box.warn {
@@ -601,17 +615,17 @@
     #growthSvg {
       width: 100%;
       height: 230px;
-      background: linear-gradient(180deg, #111920 0%, #0e151b 100%);
-      border: 1px solid #2d3a45;
+      background: linear-gradient(180deg, #0c0c0c 0%, #000000 100%);
+      border: 1px solid #262626;
       border-radius: 12px;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
     }
 
     .compare-box {
-      border: 1px solid #2f3d48;
+      border: 1px solid #282828;
       border-radius: 10px;
       padding: 10px 12px;
-      background: #111821;
+      background: #0c0c0c;
       margin-top: 10px;
       line-height: 1.55;
       font-size: 0.91rem;
@@ -619,21 +633,21 @@
     }
 
     .compare-box:hover {
-      border-color: #435566;
-      background: #131c25;
+      border-color: #363636;
+      background: #0e0e0e;
     }
 
     .order-panel {
-      border: 1px solid #2f3d48;
+      border: 1px solid #282828;
       border-radius: 10px;
-      background: #111821;
+      background: #0c0c0c;
       padding: 12px 14px;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
     }
 
     .order-mode {
       font-size: 0.79rem;
-      color: #9fb0bf;
+      color: #9f9f9f;
       margin-bottom: 10px;
       font-family: var(--mono);
     }
@@ -644,7 +658,7 @@
 
     .order-title {
       font-size: 0.78rem;
-      color: #ffd89a;
+      color: #38bdf8;
       margin-bottom: 5px;
       text-transform: uppercase;
       letter-spacing: 0.4px;
@@ -661,9 +675,9 @@
       align-items: center;
       gap: 6px;
       border-radius: 999px;
-      border: 1px solid #3a4a57;
-      background: #1a2530;
-      color: #d8e5ef;
+      border: 1px solid #303030;
+      background: #161616;
+      color: #d5d5d5;
       padding: 4px 9px;
       font-size: 0.76rem;
       font-family: var(--mono);
@@ -672,19 +686,19 @@
 
     .order-chip:hover {
       transform: translateY(-1px);
-      border-color: #4b6172;
+      border-color: #3c3c3c;
     }
 
     .order-chip.current {
       border-color: #4dabf7;
-      background: #15364e;
-      color: #e8f5ff;
+      background: #111111;
+      color: #eeeeee;
     }
 
     .order-chip.assigned {
       border-color: #42d392;
-      background: #173b30;
-      color: #ebfff5;
+      background: #141414;
+      color: #f0f0f0;
     }
 
     .order-chip.discarded {
@@ -694,9 +708,9 @@
     }
 
     .narrative-panel {
-      border: 1px solid #2f3d48;
+      border: 1px solid #282828;
       border-radius: 10px;
-      background: #111821;
+      background: #0c0c0c;
       padding: 14px 16px;
     }
 
@@ -712,14 +726,14 @@
       font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.55px;
-      color: #ffb703;
+      color: #38bdf8;
       font-weight: 700;
       margin-bottom: 7px;
     }
 
     .narrative-text {
       font-size: 0.91rem;
-      color: #dce7f0;
+      color: #d8d8d8;
       line-height: 1.6;
     }
 
@@ -729,12 +743,12 @@
 
     .narrative-text .nt-good { color: #42d392; font-weight: 600; }
     .narrative-text .nt-warn { color: #ff6b6b; font-weight: 600; }
-    .narrative-text .nt-acc  { color: #ffb703; font-weight: 600; }
+    .narrative-text .nt-acc  { color: #38bdf8; font-weight: 600; }
     .narrative-text .nt-info { color: #4dabf7; font-weight: 600; }
 
     .narrative-divider {
       border: none;
-      border-top: 1px solid #22303b;
+      border-top: 1px solid #1e1e1e;
       margin: 12px 0;
     }
 
@@ -743,9 +757,9 @@
       z-index: 999;
       pointer-events: none;
       max-width: 330px;
-      background: #0d141b;
-      color: #eaf2f7;
-      border: 1px solid #4a5c6b;
+      background: #000000;
+      color: #f0f0f0;
+      border: 1px solid #3a3a3a;
       border-radius: 8px;
       padding: 7px 8px;
       font-size: 0.78rem;
@@ -784,12 +798,164 @@
       }
 
       #vizSvg {
-        height: 420px;
+        height: 460px;
       }
     }
+
+    /* ── Theme Toggle Button ── */
+    #themeToggle {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      z-index: 1000;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #383838;
+      background: linear-gradient(180deg, #1a1a1a 0%, #111111 100%);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+    #themeToggle:hover {
+      transform: scale(1.12);
+      border-color: #38bdf8;
+      box-shadow: 0 4px 16px rgba(56,189,248,0.25);
+    }
+
+    /* ── Light Mode ── */
+    body.light {
+      --bg: #f0f2f5;
+      --panel: #ffffff;
+      --panel-2: #f5f5f5;
+      --ink: #1a1a1a;
+      --muted: #6b7280;
+      --accent: #0284c7;
+      --good: #16a34a;
+      --warn: #dc2626;
+      --busy: #2563eb;
+      --line: #e2e8f0;
+      --chip: #f1f5f9;
+      --glow: rgba(2, 132, 199, 0.2);
+      background: linear-gradient(160deg, #f8fafc 0%, #f1f5f9 45%, #f8fafc 100%);
+    }
+    body.light *::selection { background: rgba(2,132,199,0.15); color: #1a1a1a; }
+    body.light #themeToggle {
+      background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+      border-color: #d1d5db;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    body.light #themeToggle:hover {
+      border-color: #0284c7;
+      box-shadow: 0 4px 16px rgba(2,132,199,0.2);
+    }
+    body.light .left, body.light .right {
+      background: linear-gradient(160deg, #ffffff 0%, #fafafa 60%, #f5f7fa 100%);
+      border-color: #e2e8f0;
+      box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 16px 40px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04);
+    }
+    body.light .left:hover, body.light .right:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 20px 48px rgba(0,0,0,0.09), 0 4px 14px rgba(2,132,199,0.05);
+    }
+    body.light .section { border-top-color: #e2e8f0; }
+    body.light .section:hover { background: rgba(0,0,0,0.01); }
+    body.light h2::after { background: linear-gradient(90deg, rgba(2,132,199,0.7), rgba(2,132,199,0)); }
+    body.light input[type="text"], body.light input[type="number"], body.light textarea {
+      background: #ffffff; border-color: #d1d5db; color: #1a1a1a;
+    }
+    body.light input[type="text"]:focus, body.light textarea:focus { background: #ffffff; }
+    body.light input::placeholder, body.light textarea::placeholder { color: #9ca3af; }
+    body.light button {
+      border-color: #d1d5db;
+      background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+      color: #1a1a1a;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    body.light button:hover {
+      border-color: #9ca3af;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.09), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    body.light .preset-btn:hover {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 2px rgba(2,132,199,0.15);
+      background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+    }
+    body.light .preset-btn.active {
+      border-color: #0284c7;
+      background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%);
+      color: #0284c7;
+      box-shadow: 0 0 0 2px rgba(2,132,199,0.2);
+    }
+    body.light button:active { box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+    body.light .chip { background: #f1f5f9; border-color: #e2e8f0; color: #6b7280; }
+    body.light .stat-card { background: #f9fafb; border-color: #e5e7eb; }
+    body.light .stat-card:hover { background: #f0f9ff; border-color: #bae6fd; }
+    body.light .stat-value { color: #1a1a1a; }
+    body.light .status-pill { border-color: #e5e7eb; background: #f5f5f5; color: #6b7280; }
+    body.light .status-pill.active { color: #ffffff; background: #0284c7; border-color: #0284c7; }
+    body.light .toggle-row { border-color: #e2e8f0; background: #f9fafb; }
+    body.light .toggle-row:hover { border-color: #cbd5e1; background: #f0f9ff; }
+    body.light .legend-item { background: #f9fafb; border-color: #e2e8f0; color: #374151; }
+    body.light .legend-item:hover { border-color: #94a3b8; }
+    body.light .pointer-chip { background: #f1f5f9; border-color: #9ca3af; color: #0284c7; }
+    body.light .sw { border-color: rgba(2,132,199,0.4); }
+    body.light #vizSvg {
+      background: radial-gradient(ellipse at 50% 0%, rgba(2,132,199,0.04) 0%, transparent 60%),
+        linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      border-color: #e2e8f0;
+      border-top-color: #cbd5e1;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 20px rgba(0,0,0,0.05);
+    }
+    body.light #growthSvg {
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      border-color: #e2e8f0;
+      box-shadow: none;
+    }
+    body.light .history-wrap { background: #f9fafb; border-color: #e2e8f0; }
+    body.light .history-wrap::-webkit-scrollbar-track, body.light .pseudo-panel::-webkit-scrollbar-track { background: #f1f5f9; }
+    body.light .history-wrap::-webkit-scrollbar-thumb, body.light .pseudo-panel::-webkit-scrollbar-thumb { background: #cbd5e1; border-color: #e2e8f0; }
+    body.light .history-wrap::-webkit-scrollbar-thumb:hover, body.light .pseudo-panel::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    body.light th, body.light td { border-bottom-color: #e5e7eb; }
+    body.light tbody tr:nth-child(even) { background: rgba(0,0,0,0.015); }
+    body.light th { background: #f1f5f9; color: #0284c7; }
+    body.light .cplx-table th { background: #f1f5f9 !important; }
+    body.light tr[data-step]:hover { background: #f0f9ff; }
+    body.light .current-row { background: #e0f2fe; }
+    body.light .pseudo-panel { background: #f9fafb; border-color: #e2e8f0; }
+    body.light .code-line { color: #374151; }
+    body.light .code-line .ln { color: #9ca3af; }
+    body.light .code-line:hover { background: rgba(0,0,0,0.03); }
+    body.light .code-line.active { background: rgba(2,132,199,0.08); border-left-color: #0284c7; color: #1a1a1a; }
+    body.light .explain { background: #f9fafb; border-color: #e2e8f0; color: #374151; box-shadow: none; }
+    body.light details { background: #f9fafb; border-color: #e2e8f0; }
+    body.light details:hover { background: #f0f9ff; border-color: #bae6fd; }
+    body.light summary { color: #0284c7; }
+    body.light .concept-box { background: #f9fafb; border-color: #e2e8f0; }
+    body.light .concept-box:hover { border-color: #94a3b8; }
+    body.light .compare-box { background: #f9fafb; border-color: #e2e8f0; }
+    body.light .compare-box:hover { background: #f0f9ff; border-color: #bae6fd; }
+    body.light .order-panel { background: #f9fafb; border-color: #e2e8f0; box-shadow: none; }
+    body.light .order-mode { color: #6b7280; }
+    body.light .order-chip { background: #f1f5f9; border-color: #e2e8f0; color: #374151; }
+    body.light .order-chip:hover { border-color: #94a3b8; }
+    body.light .order-chip.current { background: #e0f2fe; border-color: #0284c7; color: #1a1a1a; }
+    body.light .order-chip.assigned { background: #dcfce7; border-color: #16a34a; color: #1a1a1a; }
+    body.light .order-chip.discarded { background: #fee2e2; border-color: #dc2626; color: #1a1a1a; }
+    body.light .narrative-panel { background: #f9fafb; border-color: #e2e8f0; }
+    body.light .narrative-text { color: #374151; }
+    body.light .narrative-text strong { color: #1a1a1a; }
+    body.light .narrative-divider { border-top-color: #e5e7eb; }
+    body.light .custom-tooltip { background: #ffffff; color: #1a1a1a; border-color: #cbd5e1; box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
+  <button id="themeToggle" aria-label="Toggle light/dark mode">🌙</button>
   <div class="page">
     <aside class="left">
       <div class="section">
@@ -888,12 +1054,12 @@
           <span class="legend-item"><span class="sw" style="background:#4dabf7;"></span>Current job</span>
           <span class="legend-item"><span class="sw" style="background:#42d392;"></span>Assigned job</span>
           <span class="legend-item"><span class="sw" style="background:#ff6b6b;"></span>Discarded job</span>
-          <span class="legend-item"><span class="sw" style="background:#ffb703;"></span>Slot under search</span>
-          <span class="legend-item"><span class="sw" style="background:#2a3540;"></span>Empty slot</span>
+          <span class="legend-item"><span class="sw" style="background:#38bdf8;"></span>Slot under search</span>
+          <span class="legend-item"><span class="sw" style="background:#242424;"></span>Empty slot</span>
           <span class="legend-item"><span class="pointer-chip">i</span>Current job index pointer</span>
           <span class="legend-item"><span class="pointer-chip">t</span>Current slot pointer</span>
         </div>
-        <svg id="vizSvg" viewBox="0 0 1050 390" aria-label="Scheduling visualization"></svg>
+        <svg id="vizSvg" viewBox="0 0 1050 440" aria-label="Scheduling visualization"></svg>
       </div>
 
       <div class="section">
@@ -987,7 +1153,7 @@
               </tr>
               <tr>
                 <td>Average</td>
-                <td style="color:#ffb703;font-family:var(--mono);">O(n log n + n&sup2;)</td>
+                <td style="color:#38bdf8;font-family:var(--mono);">O(n log n + n&sup2;)</td>
                 <td>Slot search dominates on mixed inputs — asymptotically same as worst.</td>
               </tr>
               <tr>
@@ -1044,16 +1210,20 @@
   <div id="tooltip" class="custom-tooltip" aria-hidden="true"></div>
 
   <script>
-    const COLORS = {
-      emptySlot: "#2a3540",
-      slotStroke: "#60788f",
-      activeSlot: "#ffb703",
-      filledSlot: "#2f7f61",
-      currentJob: "#4dabf7",
-      assignedJob: "#42d392",
-      discardedJob: "#ff6b6b",
-      normalJob: "#364655"
-    };
+    function buildColors() {
+      const light = document.body.classList.contains('light');
+      return {
+        emptySlot:    light ? "#dde3ec" : "#1c1c1c",
+        slotStroke:   light ? "#6b7280" : "#404040",
+        activeSlot:   light ? "#0284c7" : "#38bdf8",
+        filledSlot:   light ? "#334155" : "#2a2a2a",
+        currentJob:   light ? "#1d4ed8" : "#3b82f6",
+        assignedJob:  light ? "#15803d" : "#16a34a",
+        discardedJob: light ? "#b91c1c" : "#dc2626",
+        normalJob:    light ? "#475569" : "#2e2e2e"
+      };
+    }
+    let COLORS = buildColors();
 
     const pseudoLines = [
       { code: "sort jobs by profit in descending order", tip: "Highest-profit jobs are considered first." },
@@ -1110,7 +1280,9 @@
       speed: 1,
       timer: null,
       disableSorting: false,
-      sortedProfit: 0
+      sortedProfit: 0,
+      unsortedProfit: 0,
+      edf: 0
     };
 
     function setStatus(next) {
@@ -1140,10 +1312,6 @@
         throw new Error("Please enter at least one job.");
       }
       return jobs;
-    }
-
-    function clone(obj) {
-      return structuredClone(obj);
     }
 
     function addPseudoPanel() {
@@ -1217,7 +1385,7 @@
       function snapshot(extra = {}) {
         return {
           slots: slots.map((s) => (s ? s.id : null)),
-          jobs: clone(jobState),
+          jobs: structuredClone(jobState),
           counters: { ...counters },
           currentJob: extra.currentJob || null,
           pointerSlot: Number.isInteger(extra.pointerSlot) ? extra.pointerSlot : null,
@@ -1396,6 +1564,8 @@
         state.sortedProfit = state.disableSorting
           ? scheduleGreedySteps(jobs, false).steps.slice(-1)[0].history.profit
           : result.steps.slice(-1)[0].history.profit;
+        state.unsortedProfit = scheduleWithoutSort(jobs);
+        state.edf = scheduleEDF(jobs);
         state.currentStep = 0;
         setStatus("Ready");
         renderStep();
@@ -1498,6 +1668,15 @@
     function renderViz(step) {
       const svg = el.vizSvg;
       svg.innerHTML = "";
+      COLORS = buildColors();
+      const isLight = document.body.classList.contains('light');
+      const ac       = isLight ? "#0284c7" : "#38bdf8";
+      const slotTxtEmpty  = isLight ? "#374151" : "#d5d5d5";
+      const slotId   = "#f0f0f0";
+      const shineCol = "rgba(255,255,255,0.14)";
+      const footerC  = isLight ? "#6b7280" : "#929292";
+      const cardStroke = isLight ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.35)";
+      const cardMeta = "rgba(255,255,255,0.86)";
 
       const width = 1050;
       const maxSlots = Math.max(1, step.slots.length - 1);
@@ -1506,7 +1685,7 @@
       const totalW = maxSlots * slotW + (maxSlots - 1) * gap;
       const startX = Math.max(36, Math.floor((width - totalW) / 2));
 
-      const topLabel = textNode(34, 38, "Timeline Slots", 18, "#ffe3a4", "700", "Avenir Next");
+      const topLabel = textNode(34, 38, "Timeline Slots", 18, ac, "700", "Avenir Next");
       svg.appendChild(topLabel);
 
       for (let t = 1; t <= maxSlots; t += 1) {
@@ -1521,76 +1700,89 @@
           rect.classList.add("collision-slot");
           rect.setAttribute("stroke", "#ff6b6b");
         }
-        rect.setAttribute("stroke-width", isPointer ? "3" : "2");
+        rect.setAttribute("stroke-width", isPointer ? "3" : "1.5");
         svg.appendChild(rect);
+        // slot top shine
+        const slotShine = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        slotShine.setAttribute("x", String(x + 4)); slotShine.setAttribute("y", "72");
+        slotShine.setAttribute("width", String(slotW - 8)); slotShine.setAttribute("height", "2");
+        slotShine.setAttribute("rx", "1");
+        slotShine.setAttribute("fill", shineCol);
+        svg.appendChild(slotShine);
 
-        svg.appendChild(textNode(x + slotW / 2, 95, `S${t}`, 15, "#d8e5ef", "700", "Courier New", "middle"));
+        const slotLabelCol = occupiedId ? "#f0f0f0" : slotTxtEmpty;
+        svg.appendChild(textNode(x + slotW / 2, 95, `S${t}`, 15, slotLabelCol, "700", "Courier New", "middle"));
 
         if (occupiedId) {
           const j = step.jobs[occupiedId];
-          svg.appendChild(textNode(x + slotW / 2, 118, `${j.id}`, 13, "#f5fff8", "700", "Courier New", "middle"));
+          svg.appendChild(textNode(x + slotW / 2, 118, `${j.id}`, 13, slotId, "700", "Courier New", "middle"));
         } else {
-          svg.appendChild(textNode(x + slotW / 2, 118, "empty", 11, "#88a0b2", "400", "Courier New", "middle"));
+          svg.appendChild(textNode(x + slotW / 2, 118, "empty", 11, "#888888", "400", "Courier New", "middle"));
         }
 
         if (isPointer) {
-          svg.appendChild(textNode(x + slotW / 2, 60, "t", 15, "#ffd07a", "700", "Courier New", "middle"));
+          svg.appendChild(textNode(x + slotW / 2, 60, "t", 15, ac, "700", "Courier New", "middle"));
         }
       }
 
-      svg.appendChild(textNode(34, 192, state.disableSorting ? "Jobs in Input Order (Sorting Disabled)" : "Sorted Jobs (by profit)", 16, "#ffe3a4", "700", "Avenir Next"));
+      // ── Shared card-builder ────────────────────────────────────────
       const jobsArr = Object.values(step.jobs).sort((a, b) => a.sortIndex - b.sortIndex);
-      const cardW = 128;
-      const cardH = 66;
-      const rowY = 210;
-      const gapX = 12;
-      const rowTotalW = jobsArr.length * cardW + Math.max(0, jobsArr.length - 1) * gapX;
-      const rowX = Math.max(22, Math.floor((1050 - rowTotalW) / 2));
+      const cardW = 128, cardH = 66, gapX = 12;
 
-      jobsArr.forEach((job, i) => {
-        let y = rowY;
-        let x = rowX + i * (cardW + gapX);
-        let color = COLORS.normalJob;
-        let drawW = cardW;
-        let drawH = cardH;
-        let metaText = `p=${job.profit}, d=${job.deadline}`;
-        let titleSize = 14;
-        let metaSize = 13;
-
-        if (job.visualState === "current") color = COLORS.currentJob;
-        if (job.visualState === "assigned") color = COLORS.assignedJob;
-        if (job.visualState === "discarded") color = COLORS.discardedJob;
-
-        if (job.assignedSlot) {
-          const sx = startX + (job.assignedSlot - 1) * (slotW + gap);
-          x = sx;
-          y = 138;
-          drawW = slotW;
-          drawH = 56;
-          metaText = `p=${job.profit}`;
-          titleSize = 12;
-          metaSize = 11;
-        }
-
+      const mkCard = (job, x, y, w, h, color, titleSz, metaSz, metaTxt, showI, isCollision) => {
         const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         g.setAttribute("class", "job-group");
-        if (step.collisionJobs.includes(job.id)) {
-          g.classList.add("collision-job");
-        }
+        if (isCollision) g.classList.add("collision-job");
         g.setAttribute("transform", `translate(${x}, ${y})`);
-
-        g.appendChild(rectNode(0, 0, drawW, drawH, color, "#cad8e6", 10, 1.3));
-        g.appendChild(textNode(8, 20, `${job.id}`, titleSize, "#ffffff", "700", "Courier New"));
-        g.appendChild(textNode(8, 39, metaText, metaSize, "#e7f1f8", "500", "Courier New"));
-
-        if (step.currentJob === job.id) {
-          g.appendChild(textNode(drawW - 8, 16, "i", 13, "#ffe28f", "700", "Courier New", "end"));
-        }
-
+        const shine = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        shine.setAttribute("x", "3"); shine.setAttribute("y", "1");
+        shine.setAttribute("width", String(w - 6)); shine.setAttribute("height", "2");
+        shine.setAttribute("rx", "1");
+        shine.setAttribute("fill", "rgba(255,255,255,0.28)");
+        g.appendChild(rectNode(0, 0, w, h, color, cardStroke, 10, 1.5));
+        g.appendChild(shine);
+        g.appendChild(textNode(8, 20, String(job.id), titleSz, "#ffffff", "700", "Courier New"));
+        g.appendChild(textNode(8, 39, metaTxt, metaSz, cardMeta, "500", "Courier New"));
+        if (showI) g.appendChild(textNode(w - 8, 16, "i", 13, "#ffffff", "700", "Courier New", "end"));
         svg.appendChild(g);
+      };
+
+      // 1. Assigned jobs — mini-cards under their slot (gap below slot bottom=134)
+      jobsArr.filter(j => j.assignedSlot).forEach(job => {
+        const slotX = startX + (job.assignedSlot - 1) * (slotW + gap);
+        mkCard(job, slotX, 148, slotW, 56, COLORS.assignedJob, 12, 11,
+          `p=${job.profit}`, step.currentJob === job.id, step.collisionJobs.includes(job.id));
       });
 
-      svg.appendChild(textNode(34, 358, state.disableSorting ? "Pointers: i = current job in input order, t = slot pointer scanning backward" : "Pointers: i = current job in sorted order, t = slot pointer scanning backward", 12, "#93a8b8", "400", "Courier New"));
+      // 2. Sorted (pending) jobs — normal + current, not yet assigned or discarded
+      const pendingJobs = jobsArr.filter(j => !j.assignedSlot && j.visualState !== "discarded");
+      if (pendingJobs.length > 0) {
+        const pTotalW = pendingJobs.length * cardW + (pendingJobs.length - 1) * gapX;
+        const pRowX = Math.max(22, Math.floor((1050 - pTotalW) / 2));
+        // Header fixed at left edge — never moves with the cards
+        svg.appendChild(textNode(34, 218,
+          state.disableSorting ? "Jobs in Input Order (Sorting Disabled)" : "Sorted Jobs (by profit)",
+          16, ac, "700", "Avenir Next"));
+        pendingJobs.forEach((job, i) => {
+          const color = job.visualState === "current" ? COLORS.currentJob : COLORS.normalJob;
+          mkCard(job, pRowX + i * (cardW + gapX), 230, cardW, cardH, color, 14, 13,
+            `p=${job.profit}, d=${job.deadline}`, step.currentJob === job.id, step.collisionJobs.includes(job.id));
+        });
+      }
+
+      // 3. Discarded jobs — separate labeled section
+      const discardedArr = jobsArr.filter(j => j.visualState === "discarded");
+      if (discardedArr.length > 0) {
+        const dTotalW = discardedArr.length * cardW + (discardedArr.length - 1) * gapX;
+        const dRowX = Math.max(22, Math.floor((1050 - dTotalW) / 2));
+        svg.appendChild(textNode(34, 318, "Discarded Jobs", 16, COLORS.discardedJob, "700", "Avenir Next"));
+        discardedArr.forEach((job, i) => {
+          mkCard(job, dRowX + i * (cardW + gapX), 330, cardW, cardH, COLORS.discardedJob, 14, 13,
+            `p=${job.profit}, d=${job.deadline}`, false, step.collisionJobs.includes(job.id));
+        });
+      }
+
+      svg.appendChild(textNode(34, 430, state.disableSorting ? "Pointers: i = current job in input order, t = slot pointer scanning backward" : "Pointers: i = current job in sorted order, t = slot pointer scanning backward", 12, footerC, "400", "Courier New"));
     }
 
     function rectNode(x, y, w, h, fill, stroke, r = 0, sw = 2) {
@@ -1732,8 +1924,8 @@
       const ctr = lastStep.counters;
       const n = state.rawJobs.length;
       const totalProfit = lastStep.history.profit;
-      const edf = scheduleEDF(state.rawJobs);
-      const unsorted = scheduleWithoutSort(state.rawJobs);
+      const edf = state.edf;
+      const unsorted = state.unsortedProfit;
 
       // Build job assignment narrative
       const assigned = [];
@@ -1837,8 +2029,8 @@
       }
 
       const greedy = state.steps[state.steps.length - 1].history.profit;
-      const unsorted = scheduleWithoutSort(state.rawJobs);
-      const edf = scheduleEDF(state.rawJobs);
+      const unsorted = state.unsortedProfit;
+      const edf = state.edf;
       const sortedProfit = state.sortedProfit;
       const currentMode = state.disableSorting ? "Input-order mode (sorting disabled)" : "Greedy sorted mode";
 
@@ -1942,15 +2134,15 @@
 
       for (let g = 0; g <= 5; g += 1) {
         const gy = top + (g / 5) * plotH;
-        const line = rectNode(left, gy, plotW, 1, "#22303b", "#22303b", 0, 0);
+        const line = rectNode(left, gy, plotW, 1, "#1e1e1e", "#1e1e1e", 0, 0);
         svg.appendChild(line);
       }
 
-      svg.appendChild(textNode(18, top + 8, "ops", 12, "#9cb2c3", "600", "Courier New"));
-      svg.appendChild(textNode(W / 2, H - 10, "n (number of jobs)", 12, "#9cb2c3", "600", "Courier New", "middle"));
+      svg.appendChild(textNode(18, top + 8, "ops", 12, "#9c9c9c", "600", "Courier New"));
+      svg.appendChild(textNode(W / 2, H - 10, "n (number of jobs)", 12, "#9c9c9c", "600", "Courier New", "middle"));
 
-      const axisX = rectNode(left, H - bottom, plotW, 2, "#60788f", "#60788f", 0, 0);
-      const axisY = rectNode(left, top, 2, plotH, "#60788f", "#60788f", 0, 0);
+      const axisX = rectNode(left, H - bottom, plotW, 2, "#484848", "#484848", 0, 0);
+      const axisY = rectNode(left, top, 2, plotH, "#484848", "#484848", 0, 0);
       svg.appendChild(axisX);
       svg.appendChild(axisY);
 
@@ -1977,7 +2169,8 @@
       });
 
       const legendY = 20;
-      svg.appendChild(rectNode(560, legendY - 10, 470, 74, "#131b23", "#32414d", 8, 1));
+      const isLightChart = document.body.classList.contains('light');
+      svg.appendChild(rectNode(560, legendY - 10, 470, 74, isLightChart ? "#f8fafc" : "#0e0e0e", isLightChart ? "#e2e8f0" : "#2c2c2c", 8, 1));
       svg.appendChild(textNode(575, legendY + 8, "Blue: Greedy actual ops", 12, "#4dabf7", "600", "Avenir Next"));
       svg.appendChild(textNode(575, legendY + 25, "Orange: EDF actual ops (comparison)", 12, "#ff9f43", "600", "Avenir Next"));
       svg.appendChild(textNode(575, legendY + 42, "Green dashed: O(n log n + n\u00b2) theoretical", 12, "#42d392", "600", "Avenir Next"));
@@ -2080,6 +2273,14 @@
       return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
     }
 
+    function toggleTheme() {
+      const isNowLight = document.body.classList.toggle('light');
+      document.getElementById('themeToggle').textContent = isNowLight ? '☀️' : '🌙';
+      localStorage.setItem('theme', isNowLight ? 'light' : 'dark');
+      if (state.steps.length) { renderStep(); }
+      renderGrowthChart();
+    }
+
     function init() {
       addPseudoPanel();
       attachEvents();
@@ -2089,6 +2290,11 @@
       updateImpactPanels();
     }
 
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light');
+      document.getElementById('themeToggle').textContent = '☀️';
+    }
     init();
   </script>
 </body>
