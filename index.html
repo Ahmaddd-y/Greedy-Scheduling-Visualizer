@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Scheduling with Deadlines - Interactive Visualizer</title>
+  <style>
+    :root {
+      --bg: #0f1317;
+      --panel: #171e24;
+      --panel-2: #1f2931;
+      --ink: #eaf2f7;
+      --muted: #9fb0bf;
+      --accent: #ffb703;
+      --good: #42d392;
+      --warn: #ff6b6b;
+      --busy: #4dabf7;
+      --line: #2d3a45;
+      --chip: #24303a;
+      --glow: rgba(255, 183, 3, 0.25);
+      --mono: "Courier New", "Menlo", monospace;
+      --sans: "Avenir Next", "Segoe UI", sans-serif;
+      --serif: "Georgia", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    *::selection {
+      background: rgba(77, 171, 247, 0.35);
+      color: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at 85% 14%, #1f2930 0%, transparent 35%),
+        radial-gradient(circle at 12% 80%, #1f2a33 0%, transparent 30%),
+        linear-gradient(160deg, #0f1317 0%, #111a20 45%, #0f151b 100%);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.12;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 24px 24px;
+      z-index: 0;
+    }
+
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 22px 20px;
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .left, .right {
+      background: rgba(23, 30, 36, 0.94);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 34px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(3px);
+      animation: panelIn 320ms ease both;
+      transition: border-color 180ms ease, box-shadow 220ms ease;
+    }
+
+    .left:hover, .right:hover {
+      border-color: #3a4a57;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.38);
+    }
+
+    .section {
+      padding: 16px 18px 18px;
+      border-top: 1px solid var(--line);
+      transition: background 180ms ease;
+    }
+
+    .section:hover {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .section:first-child {
+      border-top: none;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 1.22rem;
+      font-family: var(--serif);
+      letter-spacing: 0.3px;
+      color: #ffe3a4;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 0.97rem;
+      color: #ffd89a;
+      letter-spacing: 0.25px;
+      display: inline-block;
+      position: relative;
+      padding-bottom: 3px;
+    }
+
+    h2::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255, 183, 3, 0.8), rgba(255, 183, 3, 0));
+    }
+
+    p, li, label, summary {
+      color: var(--ink);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      background: #0f151b;
+      color: var(--ink);
+      border: 1px solid #384754;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    textarea {
+      line-height: 1.35;
+      resize: vertical;
+      min-height: 72px;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--glow);
+      background: #111a22;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #7f93a6;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid #3a4a57;
+      background: linear-gradient(180deg, #1f2a33 0%, #172028 100%);
+      color: var(--ink);
+      padding: 8px 6px;
+      border-radius: 9px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      border-color: #5c7080;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 12px rgba(0, 0, 0, 0.22);
+    }
+
+    .preset-btn:hover {
+      border-color: #7eb4ff;
+      box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+      background: linear-gradient(180deg, #243445 0%, #1a2835 100%);
+    }
+
+    .preset-btn.active {
+      border-color: #ffb703;
+      background: linear-gradient(180deg, #3a2d12 0%, #2c230f 100%);
+      color: #ffe5a8;
+      box-shadow: 0 0 0 2px rgba(255, 183, 3, 0.22);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    summary:focus-visible {
+      outline: 2px solid #4dabf7;
+      outline-offset: 2px;
+    }
+
+    .preset-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px;
+    }
+
+    .chip {
+      background: var(--chip);
+      border: 1px solid #395062;
+      border-radius: 999px;
+      padding: 3px 9px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-right: 6px;
+      margin-bottom: 4px;
+      font-family: var(--mono);
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .stat-card {
+      background: var(--panel-2);
+      border: 1px solid #31404d;
+      border-radius: 11px;
+      padding: 10px 10px 8px;
+      transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
+    }
+
+    .stat-card:hover {
+      border-color: #47607a;
+      transform: translateY(-1px);
+      background: #24323c;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: #f5f8fa;
+      font-family: var(--mono);
+    }
+
+    .status-line {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .status-pill {
+      padding: 4px 8px;
+      font-size: 0.76rem;
+      border-radius: 999px;
+      border: 1px solid #3b4a57;
+      background: #1a252e;
+      font-family: var(--mono);
+      color: var(--muted);
+      transition: all 180ms ease;
+    }
+
+    .status-pill.active {
+      color: #0f1317;
+      background: #ffd07a;
+      border-color: #ffcf73;
+      font-weight: 700;
+    }
+
+    .speed-wrap {
+      margin-top: 11px;
+    }
+
+    .toggle-row {
+      margin-top: 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid #34424e;
+      border-radius: 10px;
+      background: #121a22;
+      transition: border-color 180ms ease, background 180ms ease;
+    }
+
+    .toggle-row:hover {
+      border-color: #4b5f6f;
+      background: #15202a;
+    }
+
+    .toggle-row input[type="checkbox"] {
+      accent-color: var(--warn);
+      width: 15px;
+      height: 15px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #1a232b;
+      border: 1px solid #33424e;
+      border-radius: 999px;
+      padding: 4px 9px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      transition: border-color 180ms ease, transform 180ms ease;
+    }
+
+    .legend-item:hover {
+      border-color: #4f6678;
+      transform: translateY(-1px);
+    }
+
+    .pointer-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 5px;
+      border: 1px solid #7d95a6;
+      font-size: 0.7rem;
+      color: #ffe2a8;
+      background: #1f2a33;
+      font-family: var(--mono);
+      font-weight: 700;
+    }
+
+    .sw {
+      width: 11px;
+      height: 11px;
+      border-radius: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    #vizSvg {
+      width: 100%;
+      height: 370px;
+      background: linear-gradient(180deg, #111920 0%, #0e151b 100%);
+      border: 1px solid #2f3d48;
+      border-radius: 12px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
+    }
+
+    .slot {
+      transition: fill 220ms ease, stroke 220ms ease;
+    }
+
+    .job-group {
+      transition: transform 220ms ease, opacity 220ms ease;
+    }
+
+    .collision-slot {
+      animation: pulseSlot 450ms ease-in-out infinite alternate;
+    }
+
+    .collision-job rect {
+      animation: pulseJob 450ms ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseSlot {
+      from { filter: drop-shadow(0 0 0 rgba(255, 107, 107, 0)); }
+      to { filter: drop-shadow(0 0 7px rgba(255, 107, 107, 0.7)); }
+    }
+
+    @keyframes pulseJob {
+      from { stroke-width: 1.3; }
+      to { stroke-width: 3; }
+    }
+
+    .history-wrap {
+      border: 1px solid #2f3d48;
+      border-radius: 10px;
+      overflow: hidden;
+      max-height: 260px;
+      overflow-y: auto;
+      background: #121921;
+    }
+
+    .history-wrap::-webkit-scrollbar,
+    .pseudo-panel::-webkit-scrollbar {
+      width: 9px;
+      height: 9px;
+    }
+
+    .history-wrap::-webkit-scrollbar-track,
+    .pseudo-panel::-webkit-scrollbar-track {
+      background: #10171e;
+      border-radius: 8px;
+    }
+
+    .history-wrap::-webkit-scrollbar-thumb,
+    .pseudo-panel::-webkit-scrollbar-thumb {
+      background: #2d3e4c;
+      border-radius: 8px;
+      border: 1px solid #425666;
+    }
+
+    .history-wrap::-webkit-scrollbar-thumb:hover,
+    .pseudo-panel::-webkit-scrollbar-thumb:hover {
+      background: #3c5365;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.79rem;
+    }
+
+    th, td {
+      border-bottom: 1px solid #26323d;
+      padding: 7px 7px;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    tr.row-assign td:nth-child(2) { color: #42d392; font-weight: 600; }
+    tr.row-discard td:nth-child(2) { color: #ff6b6b; font-weight: 600; }
+    tr.row-sort td:nth-child(2) { color: #ffb703; font-weight: 600; }
+    tr.row-check td:nth-child(2) { color: #9ecff5; }
+
+    .cplx-table th { position: static !important; background: #1e2c38 !important; }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #1c2630;
+      color: #ffe3a4;
+      z-index: 1;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    tr[data-step] {
+      cursor: pointer;
+    }
+
+    tr[data-step]:hover {
+      background: #1a2530;
+    }
+
+    .current-row {
+      background: #253140;
+    }
+
+    .pseudo-panel {
+      max-height: 265px;
+      overflow: auto;
+      border: 1px solid #2d3a45;
+      border-radius: 10px;
+      background: #111821;
+      font-family: var(--mono);
+      font-size: 0.83rem;
+      padding: 6px 0;
+    }
+
+    .code-line {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 8px;
+      padding: 5px 12px;
+      color: #cbd7e0;
+      border-left: 3px solid transparent;
+      transition: background 140ms ease, border-left-color 140ms ease;
+    }
+
+    .code-line:hover {
+      background: rgba(77, 171, 247, 0.08);
+    }
+
+    .code-line .ln {
+      color: #7f93a6;
+      text-align: right;
+      user-select: none;
+    }
+
+    .code-line.active {
+      background: rgba(255, 183, 3, 0.14);
+      border-left-color: #ffb703;
+      color: #fff2cc;
+    }
+
+    .explain {
+      min-height: 88px;
+      border: 1px solid #2f3d48;
+      border-radius: 10px;
+      padding: 11px 12px;
+      background: #111821;
+      color: #dce7f0;
+      line-height: 1.55;
+      font-size: 0.91rem;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
+    }
+
+    details {
+      border: 1px solid #2f3d48;
+      border-radius: 11px;
+      padding: 10px 12px;
+      background: #131b23;
+      margin-bottom: 10px;
+      transition: border-color 180ms ease, background 180ms ease;
+    }
+
+    details:hover {
+      border-color: #3f4f5d;
+      background: #15202a;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #ffdfa2;
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 9px;
+    }
+
+    .concept-box {
+      border: 1px solid #2d3a45;
+      background: #111821;
+      border-left: 4px solid #4dabf7;
+      border-radius: 10px;
+      padding: 10px 12px;
+      transition: transform 180ms ease, border-color 180ms ease;
+      line-height: 1.5;
+    }
+
+    .concept-box:hover {
+      transform: translateY(-1px);
+      border-color: #46627a;
+    }
+
+    .concept-box.warn {
+      border-left-color: #ff6b6b;
+    }
+
+    .concept-box.good {
+      border-left-color: #42d392;
+    }
+
+    #growthSvg {
+      width: 100%;
+      height: 230px;
+      background: linear-gradient(180deg, #111920 0%, #0e151b 100%);
+      border: 1px solid #2d3a45;
+      border-radius: 12px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
+    }
+
+    .compare-box {
+      border: 1px solid #2f3d48;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #111821;
+      margin-top: 10px;
+      line-height: 1.55;
+      font-size: 0.91rem;
+      transition: border-color 180ms ease, background 180ms ease;
+    }
+
+    .compare-box:hover {
+      border-color: #435566;
+      background: #131c25;
+    }
+
+    .order-panel {
+      border: 1px solid #2f3d48;
+      border-radius: 10px;
+      background: #111821;
+      padding: 12px 14px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
+    }
+
+    .order-mode {
+      font-size: 0.79rem;
+      color: #9fb0bf;
+      margin-bottom: 10px;
+      font-family: var(--mono);
+    }
+
+    .order-row {
+      margin-bottom: 10px;
+    }
+
+    .order-title {
+      font-size: 0.78rem;
+      color: #ffd89a;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .order-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .order-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid #3a4a57;
+      background: #1a2530;
+      color: #d8e5ef;
+      padding: 4px 9px;
+      font-size: 0.76rem;
+      font-family: var(--mono);
+      transition: transform 150ms ease, border-color 150ms ease;
+    }
+
+    .order-chip:hover {
+      transform: translateY(-1px);
+      border-color: #4b6172;
+    }
+
+    .order-chip.current {
+      border-color: #4dabf7;
+      background: #15364e;
+      color: #e8f5ff;
+    }
+
+    .order-chip.assigned {
+      border-color: #42d392;
+      background: #173b30;
+      color: #ebfff5;
+    }
+
+    .order-chip.discarded {
+      border-color: #ff6b6b;
+      background: #4a1f25;
+      color: #ffeef0;
+    }
+
+    .narrative-panel {
+      border: 1px solid #2f3d48;
+      border-radius: 10px;
+      background: #111821;
+      padding: 14px 16px;
+    }
+
+    .narrative-block {
+      margin-bottom: 16px;
+    }
+
+    .narrative-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .narrative-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.55px;
+      color: #ffb703;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .narrative-text {
+      font-size: 0.91rem;
+      color: #dce7f0;
+      line-height: 1.6;
+    }
+
+    .narrative-text strong {
+      color: #fff;
+    }
+
+    .narrative-text .nt-good { color: #42d392; font-weight: 600; }
+    .narrative-text .nt-warn { color: #ff6b6b; font-weight: 600; }
+    .narrative-text .nt-acc  { color: #ffb703; font-weight: 600; }
+    .narrative-text .nt-info { color: #4dabf7; font-weight: 600; }
+
+    .narrative-divider {
+      border: none;
+      border-top: 1px solid #22303b;
+      margin: 12px 0;
+    }
+
+    .custom-tooltip {
+      position: fixed;
+      z-index: 999;
+      pointer-events: none;
+      max-width: 330px;
+      background: #0d141b;
+      color: #eaf2f7;
+      border: 1px solid #4a5c6b;
+      border-radius: 8px;
+      padding: 7px 8px;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transform: translateY(2px);
+      transition: opacity 80ms ease, transform 80ms ease;
+    }
+
+    .custom-tooltip.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes panelIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .page {
+        grid-template-columns: 1fr;
+        padding: 14px 12px;
+        gap: 14px;
+      }
+
+      .btn-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      #vizSvg {
+        height: 420px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="left">
+      <div class="section">
+        <h1>Job Scheduling with Deadlines</h1>
+        <p class="muted">Greedy visualizer for <strong>BCS 309</strong>. Every job takes 1 time slot. Goal: maximize profit.</p>
+      </div>
+
+      <div class="section">
+        <h2>Input</h2>
+        <label for="jobsInput">Jobs format: <span class="muted">ID:profit:deadline, ...</span></label>
+        <textarea id="jobsInput" rows="3">J1:100:2, J2:19:1, J3:27:2, J4:25:1, J5:15:3</textarea>
+        <div class="preset-row" style="margin-top: 8px;">
+          <button id="presetA" class="preset-btn">Preset A (Classic)</button>
+          <button id="presetB" class="preset-btn">Preset B (Tight)</button>
+          <button id="presetC" class="preset-btn">Preset C (Worst Case)</button>
+          <button id="presetD" class="preset-btn">Preset D (Greedy Wins)</button>
+        </div>
+        <label class="toggle-row" for="disableSorting">
+          <input id="disableSorting" type="checkbox" />
+          <span><strong>Disable Sorting</strong> (run jobs in input order for impact analysis)</span>
+        </label>
+      </div>
+
+      <div class="section">
+        <h2>Playback Controls</h2>
+        <div class="btn-row">
+          <button id="buildBtn">Build Steps</button>
+          <button id="stepBtn">Step</button>
+          <button id="playBtn">Play</button>
+          <button id="pauseBtn">Pause</button>
+          <button id="resetBtn">Reset</button>
+        </div>
+
+        <div class="speed-wrap">
+          <label for="speedRange">Speed: <strong id="speedLabel">1.00x</strong></label>
+          <input id="speedRange" type="range" min="0.25" max="4" step="0.25" value="1" />
+        </div>
+
+        <div class="status-line">
+          <span class="status-pill" data-status="Idle">Idle</span>
+          <span class="status-pill" data-status="Ready">Ready</span>
+          <span class="status-pill" data-status="Playing">Playing</span>
+          <span class="status-pill" data-status="Paused">Paused</span>
+          <span class="status-pill" data-status="Done">Done</span>
+        </div>
+
+        <div class="kv" style="margin-top: 10px;">
+          <div class="stat-card">
+            <div class="stat-label">Step Counter</div>
+            <div class="stat-value" id="stepCounter">0 / 0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Profit</div>
+            <div class="stat-value" id="totalProfit">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Operation Counters (CLO-1)</h2>
+        <div class="kv">
+          <div class="stat-card">
+            <div class="stat-label">Sort Comparisons</div>
+            <div class="stat-value" id="sortCmp">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Slot Checks</div>
+            <div class="stat-value" id="slotChecks">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Assignments</div>
+            <div class="stat-value" id="assignments">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Discarded</div>
+            <div class="stat-value" id="discarded">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pseudocode</h2>
+        <div id="pseudoPanel" class="pseudo-panel"></div>
+      </div>
+
+      <div class="section">
+        <h2>Step Explanation</h2>
+        <div id="stepExplain" class="explain">Build steps to begin.</div>
+      </div>
+    </aside>
+
+    <main class="right">
+      <div class="section">
+        <h2>Visualization</h2>
+        <div class="legend">
+          <span class="legend-item"><span class="sw" style="background:#4dabf7;"></span>Current job</span>
+          <span class="legend-item"><span class="sw" style="background:#42d392;"></span>Assigned job</span>
+          <span class="legend-item"><span class="sw" style="background:#ff6b6b;"></span>Discarded job</span>
+          <span class="legend-item"><span class="sw" style="background:#ffb703;"></span>Slot under search</span>
+          <span class="legend-item"><span class="sw" style="background:#2a3540;"></span>Empty slot</span>
+          <span class="legend-item"><span class="pointer-chip">i</span>Current job index pointer</span>
+          <span class="legend-item"><span class="pointer-chip">t</span>Current slot pointer</span>
+        </div>
+        <svg id="vizSvg" viewBox="0 0 1050 390" aria-label="Scheduling visualization"></svg>
+      </div>
+
+      <div class="section">
+        <h2>History Table (Click Row to Jump)</h2>
+        <div class="history-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Action</th>
+                <th>Job</th>
+                <th>Slot</th>
+                <th>Profit</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Scheduling Order</h2>
+        <div class="order-panel" id="scheduleOrderPanel"></div>
+      </div>
+
+      <div class="section">
+        <h2>What Actually Happened</h2>
+        <div id="narrativePanel" class="narrative-panel">
+          <span class="muted">Build steps to see the plain-English summary.</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Educational Content</h2>
+
+        <details open>
+          <summary>Overview: What this algorithm does</summary>
+          <p>Job Scheduling with Deadlines selects a subset of jobs to maximize total profit. Each job takes one unit time and must finish before its deadline. The greedy strategy sorts jobs by profit (high to low), then places each job into the <strong>latest free slot</strong> before its deadline.</p>
+          <p class="muted">Paradigm: <strong>Greedy</strong>. Choice: highest-profit remaining job. Local decision is globally effective here because later-slot placement preserves earlier slots for tighter-deadline jobs.</p>
+        </details>
+
+        <details>
+          <summary>Worked Example (Step-by-Step)</summary>
+          <p>Example jobs: J1(100,2), J2(19,1), J3(27,2), J4(25,1), J5(15,3)</p>
+          <ol>
+            <li>Sort by profit: J1, J3, J4, J2, J5.</li>
+            <li>J1 deadline=2 -> put in slot 2.</li>
+            <li>J3 deadline=2 -> slot 2 full, check slot 1 -> put in slot 1.</li>
+            <li>J4 deadline=1 -> slot 1 full -> discard.</li>
+            <li>J2 deadline=1 -> slot 1 full -> discard.</li>
+            <li>J5 deadline=3 -> put in slot 3. Final profit = 142.</li>
+          </ol>
+        </details>
+
+        <div class="concept-grid">
+          <div class="concept-box good">
+            <strong>Key Idea</strong>: Always place selected job as late as possible. This protects early slots for jobs with tight deadlines.
+          </div>
+          <div class="concept-box warn">
+            <strong>Common Mistake</strong>: Placing jobs in earliest free slot can block future high-profit jobs that have no flexibility.
+          </div>
+          <div class="concept-box">
+            <strong>CLO-2 Connection</strong>: Sorting (by profit) and searching (for free slot) are both essential. Remove sorting and total profit usually drops.
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>CLO-1: Complexity &amp; Growth Curves</h2>
+
+        <details open>
+          <summary>Complexity Analysis</summary>
+          <table class="cplx-table" style="margin-top:8px;width:100%;">
+            <thead>
+              <tr>
+                <th style="width:72px;">Case</th>
+                <th style="width:148px;">Time</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Best</td>
+                <td style="color:#42d392;font-family:var(--mono);">O(n log n)</td>
+                <td>All jobs land in the first slot checked. O(n) slot assignment; sorting dominates.</td>
+              </tr>
+              <tr>
+                <td>Worst</td>
+                <td style="color:#ff6b6b;font-family:var(--mono);">O(n log n + n&sup2;)</td>
+                <td>All deadlines equal D. Job k checks k slots: 1+2+&hellip;+n = n(n+1)/2. Load Preset C to trigger this.</td>
+              </tr>
+              <tr>
+                <td>Average</td>
+                <td style="color:#ffb703;font-family:var(--mono);">O(n log n + n&sup2;)</td>
+                <td>Slot search dominates on mixed inputs — asymptotically same as worst.</td>
+              </tr>
+              <tr>
+                <td>Space</td>
+                <td style="color:#4dabf7;font-family:var(--mono);">O(n)</td>
+                <td>slots[] array of size D &le; n. Iterative — no recursion stack.</td>
+              </tr>
+            </tbody>
+          </table>
+        </details>
+
+        <label for="growthN" style="margin-top:10px;display:block;">Input size n for chart: <strong id="growthNLabel">30</strong></label>
+        <p class="muted" style="margin:3px 0 6px;">Blue = actual greedy ops &nbsp;|&nbsp; Orange = EDF ops &nbsp;|&nbsp; Green dashed = O(n log n + n&sup2;) &nbsp;|&nbsp; Red dashed = 2&sup;n (brute force)</p>
+        <input id="growthN" type="range" min="8" max="120" value="30" step="2" />
+        <svg id="growthSvg" viewBox="0 0 1050 250" aria-label="Growth chart"></svg>
+
+        <div class="compare-box" id="worstCaseNote">
+          <strong>Worst-case demo (Preset C):</strong> All 8 jobs share deadline&nbsp;6. The first job checks 1 slot, the second checks 2, &hellip;, yielding 1+2+3+4+5+6+7+8 = 36 slot checks — the full quadratic term. Load Preset C and watch the Slot Checks counter climb.
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>CLO-2: Sorting &amp; Searching</h2>
+        <div class="concept-grid" style="margin-bottom:10px;">
+          <div class="concept-box good">
+            <strong>Role of Sorting (Line 1)</strong>: Jobs are sorted by profit descending via comparison sort &mdash; O(n&nbsp;log&nbsp;n). This guarantees the highest-value candidates are evaluated first. Without it, a low-profit job can occupy a slot that a high-profit job needs.
+          </div>
+          <div class="concept-box">
+            <strong>Role of Searching (Lines 4&ndash;6)</strong>: For each job, a backward linear scan finds the latest free slot before its deadline &mdash; O(n) per job, O(n&sup2;) total. Searching <em>latest-first</em> is critical: it preserves earlier slots for future tighter-deadline jobs.
+          </div>
+        </div>
+        <p style="margin-bottom:6px;"><strong>Interactive Impact Analysis</strong> &mdash; toggle <em>Disable Sorting</em> in the Input panel, rebuild, and compare profits below:</p>
+        <div class="compare-box" id="sortingImpact"></div>
+      </div>
+
+      <div class="section">
+        <h2>CLO-3: Greedy Paradigm</h2>
+        <div class="concept-grid" style="margin-bottom:10px;">
+          <div class="concept-box good">
+            <strong>Paradigm: Greedy.</strong> At each step, pick the highest-profit remaining job and assign it to the latest available slot before its deadline. No backtracking. One pass through the sorted list.
+          </div>
+          <div class="concept-box">
+            <strong>Why it works &mdash; Exchange Argument:</strong> Suppose an optimal schedule OPT skips job&nbsp;J (high profit) and uses job&nbsp;K (lower profit) in the same slot. Swapping K&nbsp;&rarr;&nbsp;J can only increase total profit. By induction, every greedy choice is compatible with some optimal solution.
+          </div>
+          <div class="concept-box warn">
+            <strong>Counterexample &mdash; EDF fails:</strong> Earliest-Deadline-First schedules GA(profit=5,&nbsp;d=1) first because it has the earliest deadline, wasting slot&nbsp;1 and blocking GD(profit=80). Greedy bypasses GA entirely and packs GC+GD+GE for profit&nbsp;240 vs EDF&rsquo;s&nbsp;165. Load <em>Preset D</em> to see this.
+          </div>
+        </div>
+        <p style="margin-bottom:6px;"><strong>Live comparison on current input:</strong></p>
+        <div class="compare-box" id="paradigmCompare"></div>
+      </div>
+    </main>
+  </div>
+  <div id="tooltip" class="custom-tooltip" aria-hidden="true"></div>
+
+  <script>
+    const COLORS = {
+      emptySlot: "#2a3540",
+      slotStroke: "#60788f",
+      activeSlot: "#ffb703",
+      filledSlot: "#2f7f61",
+      currentJob: "#4dabf7",
+      assignedJob: "#42d392",
+      discardedJob: "#ff6b6b",
+      normalJob: "#364655"
+    };
+
+    const pseudoLines = [
+      { code: "sort jobs by profit in descending order", tip: "Highest-profit jobs are considered first." },
+      { code: "D = max deadline; slots[1..D] = EMPTY", tip: "Create timeline with one slot per time unit." },
+      { code: "for each job i in sorted jobs", tip: "Process one candidate job at a time." },
+      { code: "j = min(D, deadline[i])", tip: "Start from latest legal slot for this job." },
+      { code: "while j >= 1 and slots[j] is occupied", tip: "Search backward for a free position." },
+      { code: "j = j - 1", tip: "Move left one slot when conflict happens." },
+      { code: "if j >= 1", tip: "If a free slot was found, schedule the job." },
+      { code: "slots[j] = job i", tip: "Assign and add its profit." },
+      { code: "else discard job i", tip: "No valid slot remains before deadline." },
+      { code: "return schedule and total profit", tip: "Output chosen jobs and objective value." }
+    ];
+
+    const el = {
+      jobsInput: document.getElementById("jobsInput"),
+      buildBtn: document.getElementById("buildBtn"),
+      stepBtn: document.getElementById("stepBtn"),
+      playBtn: document.getElementById("playBtn"),
+      pauseBtn: document.getElementById("pauseBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      speedRange: document.getElementById("speedRange"),
+      speedLabel: document.getElementById("speedLabel"),
+      stepCounter: document.getElementById("stepCounter"),
+      totalProfit: document.getElementById("totalProfit"),
+      sortCmp: document.getElementById("sortCmp"),
+      slotChecks: document.getElementById("slotChecks"),
+      assignments: document.getElementById("assignments"),
+      discarded: document.getElementById("discarded"),
+      historyBody: document.getElementById("historyBody"),
+      stepExplain: document.getElementById("stepExplain"),
+      vizSvg: document.getElementById("vizSvg"),
+      pseudoPanel: document.getElementById("pseudoPanel"),
+      presetA: document.getElementById("presetA"),
+      presetB: document.getElementById("presetB"),
+      presetC: document.getElementById("presetC"),
+      presetD: document.getElementById("presetD"),
+      disableSorting: document.getElementById("disableSorting"),
+      growthN: document.getElementById("growthN"),
+      growthNLabel: document.getElementById("growthNLabel"),
+      growthSvg: document.getElementById("growthSvg"),
+      sortingImpact: document.getElementById("sortingImpact"),
+      paradigmCompare: document.getElementById("paradigmCompare"),
+      tooltip: document.getElementById("tooltip"),
+      narrativePanel: document.getElementById("narrativePanel"),
+      scheduleOrderPanel: document.getElementById("scheduleOrderPanel")
+    };
+
+    const state = {
+      rawJobs: [],
+      steps: [],
+      currentStep: 0,
+      status: "Idle",
+      speed: 1,
+      timer: null,
+      disableSorting: false,
+      sortedProfit: 0
+    };
+
+    function setStatus(next) {
+      state.status = next;
+      document.querySelectorAll(".status-pill").forEach((pill) => {
+        pill.classList.toggle("active", pill.dataset.status === next);
+      });
+    }
+
+    function parseJobs(text) {
+      const parts = text.split(",").map((s) => s.trim()).filter(Boolean);
+      const jobs = [];
+      for (const part of parts) {
+        const seg = part.split(":").map((s) => s.trim());
+        if (seg.length !== 3) {
+          throw new Error("Each job must be ID:profit:deadline");
+        }
+        const id = seg[0] || `J${jobs.length + 1}`;
+        const profit = Number(seg[1]);
+        const deadline = Number(seg[2]);
+        if (!Number.isFinite(profit) || !Number.isFinite(deadline) || deadline < 1 || profit < 0) {
+          throw new Error(`Invalid values in job ${part}`);
+        }
+        jobs.push({ id, profit, deadline: Math.floor(deadline) });
+      }
+      if (!jobs.length) {
+        throw new Error("Please enter at least one job.");
+      }
+      return jobs;
+    }
+
+    function clone(obj) {
+      return structuredClone(obj);
+    }
+
+    function addPseudoPanel() {
+      el.pseudoPanel.innerHTML = pseudoLines.map((line, idx) => {
+        const n = idx + 1;
+        return `<div class="code-line" id="pl-${n}" data-tip="${line.tip.replace(/"/g, "&quot;")}"><span class="ln">${n}</span><span>${line.code}</span></div>`;
+      }).join("");
+
+      Array.from(el.pseudoPanel.querySelectorAll(".code-line")).forEach((line) => {
+        line.addEventListener("mouseenter", (ev) => showTooltip(ev.currentTarget.dataset.tip, ev));
+        line.addEventListener("mousemove", (ev) => moveTooltip(ev));
+        line.addEventListener("mouseleave", hideTooltip);
+      });
+    }
+
+    function showTooltip(text, ev) {
+      if (!text) return;
+      el.tooltip.textContent = text;
+      el.tooltip.classList.add("show");
+      el.tooltip.setAttribute("aria-hidden", "false");
+      moveTooltip(ev);
+    }
+
+    function moveTooltip(ev) {
+      const pad = 14;
+      const t = el.tooltip;
+      const width = t.offsetWidth || 220;
+      const height = t.offsetHeight || 40;
+      let x = ev.clientX + pad;
+      let y = ev.clientY + pad;
+      if (x + width > window.innerWidth - 8) x = ev.clientX - width - pad;
+      if (y + height > window.innerHeight - 8) y = ev.clientY - height - pad;
+      t.style.left = `${Math.max(8, x)}px`;
+      t.style.top = `${Math.max(8, y)}px`;
+    }
+
+    function hideTooltip() {
+      el.tooltip.classList.remove("show");
+      el.tooltip.setAttribute("aria-hidden", "true");
+    }
+
+    function setActivePreset(button) {
+      document.querySelectorAll(".preset-btn").forEach((btn) => btn.classList.remove("active"));
+      if (button) button.classList.add("active");
+    }
+
+    function scheduleGreedySteps(jobs, disableSorting = false) {
+      const steps = [];
+      const working = jobs.map((j, idx) => ({ ...j, originalIndex: idx }));
+      const counters = { sortCmp: 0, slotChecks: 0, assignments: 0, discarded: 0 };
+
+      const sorted = disableSorting
+        ? [...working]
+        : [...working].sort((a, b) => {
+            counters.sortCmp += 1;
+            if (b.profit !== a.profit) return b.profit - a.profit;
+            return a.deadline - b.deadline;
+          });
+
+      const maxD = Math.max(...sorted.map((j) => j.deadline));
+      const slots = Array(maxD + 1).fill(null);
+      const jobState = Object.fromEntries(sorted.map((j, idx) => [j.id, {
+        id: j.id,
+        profit: j.profit,
+        deadline: j.deadline,
+        sortIndex: idx,
+        visualState: "normal",
+        assignedSlot: null
+      }]));
+
+      function snapshot(extra = {}) {
+        return {
+          slots: slots.map((s) => (s ? s.id : null)),
+          jobs: clone(jobState),
+          counters: { ...counters },
+          currentJob: extra.currentJob || null,
+          pointerSlot: Number.isInteger(extra.pointerSlot) ? extra.pointerSlot : null,
+          collisionSlots: Array.isArray(extra.collisionSlots) ? [...extra.collisionSlots] : [],
+          collisionJobs: Array.isArray(extra.collisionJobs) ? [...extra.collisionJobs] : [],
+          pseudo: extra.pseudo || null,
+          explanation: extra.explanation || "",
+          history: extra.history || { action: "", job: "-", slot: "-", profit: 0 }
+        };
+      }
+
+      steps.push(snapshot({
+        pseudo: 1,
+        explanation: disableSorting
+          ? "Sorting disabled: jobs stay in input order for impact analysis."
+          : `Sorted ${sorted.length} jobs by profit descending. Sort comparisons used: ${counters.sortCmp}.`,
+        history: { action: disableSorting ? "Sorting disabled" : "Sort by profit", job: "-", slot: "-", profit: 0 }
+      }));
+
+      steps.push(snapshot({
+        pseudo: 2,
+        explanation: `Initialized ${maxD} time slots from 1 to ${maxD}.`,
+        history: { action: "Initialize slots", job: "-", slot: `1..${maxD}`, profit: 0 }
+      }));
+
+      for (let i = 0; i < sorted.length; i += 1) {
+        const job = sorted[i];
+        jobState[job.id].visualState = "current";
+
+        steps.push(snapshot({
+          currentJob: job.id,
+          pseudo: 3,
+          explanation: `Considering job ${job.id} (profit=${job.profit}, deadline=${job.deadline}) as next highest-profit choice.`,
+          history: { action: "Pick job", job: job.id, slot: "-", profit: job.profit }
+        }));
+
+        let j = Math.min(maxD, job.deadline);
+        const blockedSlots = [];
+        const blockedJobs = [];
+        steps.push(snapshot({
+          currentJob: job.id,
+          pointerSlot: j,
+          pseudo: 4,
+          explanation: `Start searching from latest valid slot j=min(${maxD}, ${job.deadline})=${j}.`,
+          history: { action: "Set slot pointer", job: job.id, slot: String(j), profit: job.profit }
+        }));
+
+        while (j >= 1) {
+          counters.slotChecks += 1;
+          const occupied = Boolean(slots[j]);
+          if (occupied) {
+            blockedSlots.push(j);
+            blockedJobs.push(slots[j].id);
+          }
+          steps.push(snapshot({
+            currentJob: job.id,
+            pointerSlot: j,
+            pseudo: 5,
+            explanation: occupied
+              ? `Check slot ${j}: occupied by ${slots[j].id}. Keep searching left.`
+              : `Check slot ${j}: free. Job ${job.id} can be placed here.`,
+            history: { action: "Check slot", job: job.id, slot: String(j), profit: job.profit }
+          }));
+
+          if (!occupied) break;
+          j -= 1;
+          steps.push(snapshot({
+            currentJob: job.id,
+            pointerSlot: j >= 1 ? j : 1,
+            pseudo: 6,
+            explanation: `Slot was occupied, so j is decremented to ${j}.`,
+            history: { action: "Move left", job: job.id, slot: String(j), profit: job.profit }
+          }));
+        }
+
+        if (j >= 1 && !slots[j]) {
+          steps.push(snapshot({
+            currentJob: job.id,
+            pointerSlot: j,
+            pseudo: 7,
+            explanation: `j=${j} is valid (>=1), so assignment is possible.`,
+            history: { action: "Condition true", job: job.id, slot: String(j), profit: job.profit }
+          }));
+
+          slots[j] = job;
+          jobState[job.id].visualState = "assigned";
+          jobState[job.id].assignedSlot = j;
+          counters.assignments += 1;
+
+          steps.push(snapshot({
+            currentJob: job.id,
+            pointerSlot: j,
+            pseudo: 8,
+            explanation: `Assigned ${job.id} to slot ${j}. Total assigned jobs: ${counters.assignments}.`,
+            history: { action: "Assign", job: job.id, slot: String(j), profit: job.profit }
+          }));
+        } else {
+          steps.push(snapshot({
+            currentJob: job.id,
+            pseudo: 7,
+            explanation: `No free slot before deadline for ${job.id}.`,
+            collisionSlots: blockedSlots,
+            collisionJobs: blockedJobs,
+            history: { action: "Condition false", job: job.id, slot: "-", profit: job.profit }
+          }));
+
+          jobState[job.id].visualState = "discarded";
+          counters.discarded += 1;
+
+          steps.push(snapshot({
+            currentJob: job.id,
+            pseudo: 9,
+            collisionSlots: blockedSlots,
+            collisionJobs: blockedJobs,
+            explanation: blockedJobs.length
+              ? `Discarded ${job.id}. Relevant slots were occupied by ${blockedJobs.join(", ")}, showing opportunity cost from earlier choices.`
+              : `Discarded ${job.id}. It cannot be finished by deadline ${job.deadline}.`,
+            history: { action: "Discard", job: job.id, slot: "-", profit: job.profit }
+          }));
+        }
+
+        if (jobState[job.id].visualState === "current") {
+          jobState[job.id].visualState = "normal";
+        }
+      }
+
+      const totalProfit = slots.reduce((sum, item) => sum + (item ? item.profit : 0), 0);
+      steps.push(snapshot({
+        pseudo: 10,
+        explanation: `Finished schedule. Total profit = ${totalProfit}.`,
+        history: { action: "Return result", job: "-", slot: "-", profit: totalProfit }
+      }));
+
+      return { steps, sorted, maxD };
+    }
+
+    function scheduleWithoutSort(jobs) {
+      const arr = jobs.map((j) => ({ ...j }));
+      const D = Math.max(...arr.map((j) => j.deadline));
+      const slots = Array(D + 1).fill(null);
+      for (const job of arr) {
+        for (let t = Math.min(D, job.deadline); t >= 1; t -= 1) {
+          if (!slots[t]) {
+            slots[t] = job;
+            break;
+          }
+        }
+      }
+      return slots.reduce((s, it) => s + (it ? it.profit : 0), 0);
+    }
+
+    function scheduleEDF(jobs) {
+      const arr = jobs.map((j) => ({ ...j })).sort((a, b) => a.deadline - b.deadline || b.profit - a.profit);
+      const D = Math.max(...arr.map((j) => j.deadline));
+      const slots = Array(D + 1).fill(null);
+      for (const job of arr) {
+        for (let t = 1; t <= Math.min(D, job.deadline); t += 1) {
+          if (!slots[t]) {
+            slots[t] = job;
+            break;
+          }
+        }
+      }
+      return slots.reduce((s, it) => s + (it ? it.profit : 0), 0);
+    }
+
+    function build() {
+      try {
+        stopPlay();
+        const jobs = parseJobs(el.jobsInput.value);
+        state.rawJobs = jobs;
+        state.disableSorting = el.disableSorting.checked;
+        const result = scheduleGreedySteps(jobs, state.disableSorting);
+        state.steps = result.steps;
+        // Cache sorted profit — only rerun algorithm if sorting was disabled
+        state.sortedProfit = state.disableSorting
+          ? scheduleGreedySteps(jobs, false).steps.slice(-1)[0].history.profit
+          : result.steps.slice(-1)[0].history.profit;
+        state.currentStep = 0;
+        setStatus("Ready");
+        renderStep();
+        renderHistory();
+        updateImpactPanels();
+        renderNarrative();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function renderStep() {
+      if (!state.steps.length) {
+        el.stepCounter.textContent = "0 / 0";
+        return;
+      }
+      const idx = Math.max(0, Math.min(state.currentStep, state.steps.length - 1));
+      const step = state.steps[idx];
+
+      const total = state.steps.length;
+      el.stepCounter.textContent = `${idx + 1} / ${total}`;
+      el.sortCmp.textContent = step.counters.sortCmp;
+      el.slotChecks.textContent = step.counters.slotChecks;
+      el.assignments.textContent = step.counters.assignments;
+      el.discarded.textContent = step.counters.discarded;
+      el.stepExplain.textContent = step.explanation;
+
+      const profitNow = step.slots.reduce((sum, id) => {
+        if (!id) return sum;
+        const job = step.jobs[id];
+        return sum + (job ? job.profit : 0);
+      }, 0);
+      el.totalProfit.textContent = String(profitNow);
+
+      renderPseudo(step.pseudo);
+      renderViz(step);
+      renderSchedulingOrder(step);
+      markHistoryRow(idx);
+
+      if (idx === state.steps.length - 1 && state.status === "Playing") {
+        setStatus("Done");
+        stopPlay();
+      }
+    }
+
+    function renderPseudo(activeLine) {
+      document.querySelectorAll(".code-line").forEach((line, i) => {
+        const on = (i + 1) === activeLine;
+        line.classList.toggle("active", on);
+      });
+      // Auto-scroll within the panel only — avoids page-level jumps
+      const active = el.pseudoPanel.querySelector(".code-line.active");
+      if (active) {
+        const panel = el.pseudoPanel;
+        const lineTop = active.offsetTop;
+        const lineBot = lineTop + active.offsetHeight;
+        if (lineTop < panel.scrollTop + 4) {
+          panel.scrollTop = lineTop - 4;
+        } else if (lineBot > panel.scrollTop + panel.clientHeight - 4) {
+          panel.scrollTop = lineBot - panel.clientHeight + 4;
+        }
+      }
+    }
+
+    function renderSchedulingOrder(step) {
+      if (!step) {
+        el.scheduleOrderPanel.innerHTML = "<span class=\"muted\">Build steps to view scheduling order.</span>";
+        return;
+      }
+
+      const jobsArr = Object.values(step.jobs).sort((a, b) => a.sortIndex - b.sortIndex);
+      const processChips = jobsArr.map((job, idx) => {
+        const classes = ["order-chip"];
+        if (job.id === step.currentJob) classes.push("current");
+        if (job.visualState === "assigned") classes.push("assigned");
+        if (job.visualState === "discarded") classes.push("discarded");
+        return `<span class="${classes.join(" ")}">${idx + 1}.${job.id}(p${job.profit},d${job.deadline})</span>`;
+      }).join("");
+
+      const slotChips = [];
+      for (let s = 1; s < step.slots.length; s += 1) {
+        const id = step.slots[s];
+        slotChips.push(`<span class="order-chip ${id ? "assigned" : ""}">S${s}:${id || "empty"}</span>`);
+      }
+
+      const mode = state.disableSorting ? "Input-order mode (sorting disabled)" : "Greedy sorted-by-profit mode";
+      el.scheduleOrderPanel.innerHTML = `
+        <div class="order-mode">Mode: ${mode}</div>
+        <div class="order-row">
+          <div class="order-title">Processing Order</div>
+          <div class="order-chips">${processChips || "<span class='muted'>No jobs</span>"}</div>
+        </div>
+        <div class="order-row">
+          <div class="order-title">Current Schedule by Slot</div>
+          <div class="order-chips">${slotChips.join("") || "<span class='muted'>No slots</span>"}</div>
+        </div>
+      `;
+    }
+
+    function renderViz(step) {
+      const svg = el.vizSvg;
+      svg.innerHTML = "";
+
+      const width = 1050;
+      const maxSlots = Math.max(1, step.slots.length - 1);
+      const slotW = Math.min(86, Math.max(58, Math.floor((width - 90) / maxSlots)));
+      const gap = 8;
+      const totalW = maxSlots * slotW + (maxSlots - 1) * gap;
+      const startX = Math.max(36, Math.floor((width - totalW) / 2));
+
+      const topLabel = textNode(34, 38, "Timeline Slots", 18, "#ffe3a4", "700", "Avenir Next");
+      svg.appendChild(topLabel);
+
+      for (let t = 1; t <= maxSlots; t += 1) {
+        const x = startX + (t - 1) * (slotW + gap);
+        const occupiedId = step.slots[t];
+        const isPointer = step.pointerSlot === t;
+        const fill = occupiedId ? COLORS.filledSlot : COLORS.emptySlot;
+
+        const rect = rectNode(x, 70, slotW, 64, fill, isPointer ? COLORS.activeSlot : COLORS.slotStroke, 7);
+        rect.setAttribute("class", "slot");
+        if (step.collisionSlots.includes(t)) {
+          rect.classList.add("collision-slot");
+          rect.setAttribute("stroke", "#ff6b6b");
+        }
+        rect.setAttribute("stroke-width", isPointer ? "3" : "2");
+        svg.appendChild(rect);
+
+        svg.appendChild(textNode(x + slotW / 2, 95, `S${t}`, 15, "#d8e5ef", "700", "Courier New", "middle"));
+
+        if (occupiedId) {
+          const j = step.jobs[occupiedId];
+          svg.appendChild(textNode(x + slotW / 2, 118, `${j.id}`, 13, "#f5fff8", "700", "Courier New", "middle"));
+        } else {
+          svg.appendChild(textNode(x + slotW / 2, 118, "empty", 11, "#88a0b2", "400", "Courier New", "middle"));
+        }
+
+        if (isPointer) {
+          svg.appendChild(textNode(x + slotW / 2, 60, "t", 15, "#ffd07a", "700", "Courier New", "middle"));
+        }
+      }
+
+      svg.appendChild(textNode(34, 192, state.disableSorting ? "Jobs in Input Order (Sorting Disabled)" : "Sorted Jobs (by profit)", 16, "#ffe3a4", "700", "Avenir Next"));
+      const jobsArr = Object.values(step.jobs).sort((a, b) => a.sortIndex - b.sortIndex);
+      const cardW = 128;
+      const cardH = 66;
+      const rowY = 210;
+      const gapX = 12;
+      const rowTotalW = jobsArr.length * cardW + Math.max(0, jobsArr.length - 1) * gapX;
+      const rowX = Math.max(22, Math.floor((1050 - rowTotalW) / 2));
+
+      jobsArr.forEach((job, i) => {
+        let y = rowY;
+        let x = rowX + i * (cardW + gapX);
+        let color = COLORS.normalJob;
+        let drawW = cardW;
+        let drawH = cardH;
+        let metaText = `p=${job.profit}, d=${job.deadline}`;
+        let titleSize = 14;
+        let metaSize = 13;
+
+        if (job.visualState === "current") color = COLORS.currentJob;
+        if (job.visualState === "assigned") color = COLORS.assignedJob;
+        if (job.visualState === "discarded") color = COLORS.discardedJob;
+
+        if (job.assignedSlot) {
+          const sx = startX + (job.assignedSlot - 1) * (slotW + gap);
+          x = sx;
+          y = 138;
+          drawW = slotW;
+          drawH = 56;
+          metaText = `p=${job.profit}`;
+          titleSize = 12;
+          metaSize = 11;
+        }
+
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "job-group");
+        if (step.collisionJobs.includes(job.id)) {
+          g.classList.add("collision-job");
+        }
+        g.setAttribute("transform", `translate(${x}, ${y})`);
+
+        g.appendChild(rectNode(0, 0, drawW, drawH, color, "#cad8e6", 10, 1.3));
+        g.appendChild(textNode(8, 20, `${job.id}`, titleSize, "#ffffff", "700", "Courier New"));
+        g.appendChild(textNode(8, 39, metaText, metaSize, "#e7f1f8", "500", "Courier New"));
+
+        if (step.currentJob === job.id) {
+          g.appendChild(textNode(drawW - 8, 16, "i", 13, "#ffe28f", "700", "Courier New", "end"));
+        }
+
+        svg.appendChild(g);
+      });
+
+      svg.appendChild(textNode(34, 358, state.disableSorting ? "Pointers: i = current job in input order, t = slot pointer scanning backward" : "Pointers: i = current job in sorted order, t = slot pointer scanning backward", 12, "#93a8b8", "400", "Courier New"));
+    }
+
+    function rectNode(x, y, w, h, fill, stroke, r = 0, sw = 2) {
+      const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      rect.setAttribute("x", String(x));
+      rect.setAttribute("y", String(y));
+      rect.setAttribute("width", String(w));
+      rect.setAttribute("height", String(h));
+      rect.setAttribute("fill", fill);
+      rect.setAttribute("stroke", stroke);
+      rect.setAttribute("rx", String(r));
+      rect.setAttribute("stroke-width", String(sw));
+      return rect;
+    }
+
+    function textNode(x, y, txt, size = 12, fill = "#fff", weight = "400", family = "Avenir Next", anchor = "start") {
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", String(x));
+      text.setAttribute("y", String(y));
+      text.setAttribute("fill", fill);
+      text.setAttribute("font-size", String(size));
+      text.setAttribute("font-family", family);
+      text.setAttribute("font-weight", weight);
+      text.setAttribute("text-anchor", anchor);
+      text.textContent = txt;
+      return text;
+    }
+
+    function nextStep() {
+      if (!state.steps.length) return;
+      if (state.currentStep < state.steps.length - 1) {
+        state.currentStep += 1;
+        renderStep();
+      } else {
+        setStatus("Done");
+        stopPlay();
+      }
+    }
+
+    function prevToStep(stepIdx) {
+      if (!state.steps.length) return;
+      state.currentStep = Math.max(0, Math.min(stepIdx, state.steps.length - 1));
+      setStatus(state.currentStep === state.steps.length - 1 ? "Done" : "Paused");
+      stopPlay();
+      renderStep();
+    }
+
+    function play() {
+      if (!state.steps.length) return;
+      if (state.currentStep >= state.steps.length - 1) {
+        state.currentStep = 0;
+      }
+      setStatus("Playing");
+      stopPlay();
+      const delay = Math.max(130, Math.floor(780 / state.speed));
+      state.timer = setInterval(() => {
+        if (state.status !== "Playing") {
+          stopPlay();
+          return;
+        }
+        nextStep();
+        if (state.currentStep >= state.steps.length - 1) {
+          setStatus("Done");
+          stopPlay();
+        }
+      }, delay);
+    }
+
+    function stopPlay() {
+      if (state.timer) {
+        clearInterval(state.timer);
+        state.timer = null;
+      }
+    }
+
+    function resetAll() {
+      stopPlay();
+      state.currentStep = 0;
+      if (state.steps.length) {
+        setStatus("Ready");
+        renderStep();
+      } else {
+        setStatus("Idle");
+        el.narrativePanel.innerHTML = '<span class="muted">Build steps to see the plain-English summary.</span>';
+        el.stepCounter.textContent = "0 / 0";
+        el.totalProfit.textContent = "0";
+        el.sortCmp.textContent = "0";
+        el.slotChecks.textContent = "0";
+        el.assignments.textContent = "0";
+        el.discarded.textContent = "0";
+        el.stepExplain.textContent = "Build steps to begin.";
+        el.vizSvg.innerHTML = "";
+        renderSchedulingOrder(null);
+        renderHistory();
+      }
+    }
+
+    function renderHistory() {
+      const rows = state.steps.slice(Math.max(0, state.steps.length - 30));
+      const offset = Math.max(0, state.steps.length - 30);
+      el.historyBody.innerHTML = rows.map((step, localIdx) => {
+        const idx = offset + localIdx;
+        const h = step.history;
+        const rowCls = (() => {
+          const a = h.action.toLowerCase();
+          if (a.includes("assign")) return "row-assign";
+          if (a.includes("discard")) return "row-discard";
+          if (a.includes("sort") || a.includes("init") || a.includes("return")) return "row-sort";
+          return "row-check";
+        })();
+        return `
+          <tr data-step="${idx}" class="${rowCls}">
+            <td>${idx + 1}</td>
+            <td>${h.action}</td>
+            <td>${h.job}</td>
+            <td>${h.slot}</td>
+            <td>${h.profit}</td>
+          </tr>
+        `;
+      }).join("");
+
+      markHistoryRow(state.currentStep);
+    }
+
+    function markHistoryRow(stepIdx) {
+      const rows = Array.from(el.historyBody.querySelectorAll("tr[data-step]"));
+      rows.forEach((r) => r.classList.remove("current-row"));
+      const row = rows.find((r) => Number(r.dataset.step) === stepIdx);
+      if (row) row.classList.add("current-row");
+    }
+
+    function renderNarrative() {
+      if (!state.steps.length || !state.rawJobs.length) {
+        el.narrativePanel.innerHTML = '<span class="muted">Build steps to see the plain-English summary.</span>';
+        return;
+      }
+
+      const lastStep = state.steps[state.steps.length - 1];
+      const ctr = lastStep.counters;
+      const n = state.rawJobs.length;
+      const totalProfit = lastStep.history.profit;
+      const edf = scheduleEDF(state.rawJobs);
+      const unsorted = scheduleWithoutSort(state.rawJobs);
+
+      // Build job assignment narrative
+      const assigned = [];
+      const discarded = [];
+      for (const [id, job] of Object.entries(lastStep.jobs)) {
+        if (job.visualState === "assigned") assigned.push(job);
+        else if (job.visualState === "discarded") discarded.push(job);
+      }
+      assigned.sort((a, b) => (a.assignedSlot || 0) - (b.assignedSlot || 0));
+
+      const schedSentences = assigned.map(
+        (j) => `<strong>${j.id}</strong> (profit&nbsp;${j.profit}, deadline&nbsp;${j.deadline}) went into slot&nbsp;${j.assignedSlot}`
+      );
+      const discardSentences = discarded.map(
+        (j) => `<strong>${j.id}</strong> (profit&nbsp;${j.profit})`
+      );
+
+      let schedNarrative = `You gave the algorithm <strong>${n} job${n !== 1 ? "s" : ""}</strong>. ` +
+        `After sorting by profit from highest to lowest, it worked through each job one at a time and tried to place it into ` +
+        `the <em>latest available slot</em> before its deadline.<br><br>`;
+
+      if (assigned.length) {
+        schedNarrative += `<span class="nt-good">${assigned.length} job${assigned.length !== 1 ? "s" : ""} were scheduled:</span> ` +
+          schedSentences.join(", ") + ". ";
+      }
+      if (discarded.length) {
+        schedNarrative += `<span class="nt-warn">${discarded.length} job${discarded.length !== 1 ? "s" : ""} were discarded</span> because every slot before their deadline was already taken: ` +
+          discardSentences.join(", ") + ". ";
+      }
+      schedNarrative += `The total profit collected was <span class="nt-acc">${totalProfit}</span>.`;
+
+      // Greedy vs alternatives
+      let compNarrative = "";
+      if (totalProfit > edf) {
+        compNarrative = `Compared to Earliest-Deadline-First (which would have earned <span class="nt-warn">${edf}</span>), ` +
+          `the greedy approach did <span class="nt-good">${totalProfit - edf} better</span>. This is because EDF prioritises urgency over value &mdash; ` +
+          `it can waste a slot on a low-profit job just because that job\'s deadline is tight.`;
+      } else if (totalProfit === edf) {
+        compNarrative = `On this particular input, both greedy and EDF produced the same profit (<span class="nt-acc">${totalProfit}</span>). ` +
+          `This can happen when high-profit jobs also happen to have early deadlines. Try Preset D to see a case where they differ.`;
+      } else {
+        compNarrative = `On this input, EDF actually matched or beat greedy (<span class="nt-info">${edf}</span> vs <span class="nt-acc">${totalProfit}</span>). ` +
+          `This is unusual &mdash; it means the high-profit jobs also had early deadlines, so sorting by profit vs by deadline gave similar results.`;
+      }
+
+      if (unsorted !== totalProfit) {
+        compNarrative += ` If you had run the jobs in input order without sorting, the profit would have been <span class="nt-warn">${unsorted}</span> &mdash; ` +
+          `a loss of <span class="nt-warn">${totalProfit - unsorted}</span> profit units. That is why the sort step matters.`;
+      } else {
+        compNarrative += ` Interestingly, running without sorting would give the same result (<span class="nt-info">${unsorted}</span>) on this input &mdash; the order happened to be already optimal.`;
+      }
+
+      // Complexity narrative
+      const sortCmp = ctr.sortCmp;
+      const slotChecks = ctr.slotChecks;
+      const totalOps = sortCmp + slotChecks + ctr.assignments;
+      const theoretical = Math.round(n * Math.log2(Math.max(n, 2)) + n * n);
+      const ratio = totalOps > 0 ? (theoretical / totalOps).toFixed(1) : "N/A";
+
+      let complexNarrative = `The algorithm touched <span class="nt-acc">${totalOps} operations</span> in total. ` +
+        `Breaking that down: the sorting step made <span class="nt-info">${sortCmp} comparison${sortCmp !== 1 ? "s" : ""}</span> ` +
+        `to put the jobs in profit order, and the slot-search loop ran <span class="nt-info">${slotChecks} slot check${slotChecks !== 1 ? "s" : ""}</span> ` +
+        `across all jobs.<br><br>`;
+
+      if (slotChecks <= n) {
+        complexNarrative += `With only <strong>${slotChecks}</strong> slot checks for ${n} jobs, you\'re seeing the <span class="nt-good">near-best case</span>: ` +
+          `most jobs found a free slot on the first try. The slot-search cost was essentially O(n).`;
+      } else if (slotChecks > n * (n - 1) / 3) {
+        complexNarrative += `With <strong>${slotChecks}</strong> slot checks for ${n} jobs, you\'re close to the <span class="nt-warn">worst case</span>. ` +
+          `Jobs had to scan many occupied slots before finding a free one (or failing). This is the O(n&sup2;) slot-search behaviour. Load Preset C to see the maximum.`;
+      } else {
+        complexNarrative += `With <strong>${slotChecks}</strong> slot checks for ${n} jobs, you\'re seeing a <span class="nt-acc">typical middle-ground</span>. ` +
+          `Some jobs needed to search past occupied slots, but none had to scan all the way back to slot 1.`;
+      }
+      complexNarrative += ` The theoretical O(n log n + n&sup2;) bound for n=${n} is ~${theoretical} ops; ` +
+        `actual was ${totalOps} &mdash; a factor of ~${ratio}x under the ceiling.`;
+
+      el.narrativePanel.innerHTML = `
+        <div class="narrative-block">
+          <div class="narrative-label">&#x1F4CB; Greedy Scheduling</div>
+          <div class="narrative-text">${schedNarrative}</div>
+        </div>
+        <hr class="narrative-divider">
+        <div class="narrative-block">
+          <div class="narrative-label">&#x2696;&#xFE0F; Greedy vs. Alternatives</div>
+          <div class="narrative-text">${compNarrative}</div>
+        </div>
+        <hr class="narrative-divider">
+        <div class="narrative-block">
+          <div class="narrative-label">&#x23F1; Complexity in Plain English</div>
+          <div class="narrative-text">${complexNarrative}</div>
+        </div>
+      `;
+    }
+
+    function updateImpactPanels() {
+      if (!state.rawJobs.length) {
+        el.sortingImpact.textContent = "Build steps first.";
+        el.paradigmCompare.textContent = "Build steps first.";
+        return;
+      }
+
+      const greedy = state.steps[state.steps.length - 1].history.profit;
+      const unsorted = scheduleWithoutSort(state.rawJobs);
+      const edf = scheduleEDF(state.rawJobs);
+      const sortedProfit = state.sortedProfit;
+      const currentMode = state.disableSorting ? "Input-order mode (sorting disabled)" : "Greedy sorted mode";
+
+      const impactText = [
+        `Current run mode: ${currentMode}; profit = ${greedy}.`,
+        `Greedy sorted baseline profit = ${sortedProfit}.`,
+        `Without sorting (input order): profit = ${unsorted}.`,
+        `Change caused by sorting = ${sortedProfit - unsorted} profit units.`
+      ].join(" ");
+
+      el.sortingImpact.innerHTML = impactText;
+
+      const compare = [
+        `Current run profit = ${greedy}.`,
+        `Greedy sorted profit = ${sortedProfit}.`,
+        `Earliest-Deadline-First heuristic profit = ${edf}.`,
+        sortedProfit >= edf
+          ? `Greedy paradigm is better by ${sortedProfit - edf} on this input.`
+          : `EDF happened to win by ${edf - sortedProfit} on this input.`
+      ].join(" ");
+
+      el.paradigmCompare.innerHTML = compare;
+    }
+
+    function simulateOpsForN(n) {
+      const jobs = [];
+      for (let i = 1; i <= n; i += 1) {
+        jobs.push({
+          id: `J${i}`,
+          profit: 10 + ((i * 37) % 250),
+          deadline: 1 + ((i * 13) % Math.max(2, Math.floor(0.8 * n)))
+        });
+      }
+      const out = scheduleGreedySteps(jobs);
+      const end = out.steps[out.steps.length - 1].counters;
+      return end.sortCmp + end.slotChecks + end.assignments;
+    }
+
+    function simulateEDFOpsForN(n) {
+      const jobs = [];
+      for (let i = 1; i <= n; i += 1) {
+        jobs.push({
+          id: `J${i}`,
+          profit: 10 + ((i * 37) % 250),
+          deadline: 1 + ((i * 13) % Math.max(2, Math.floor(0.8 * n)))
+        });
+      }
+      // EDF: sort by deadline ascending, assign to earliest free slot
+      const arr = [...jobs].sort((a, b) => a.deadline - b.deadline || b.profit - a.profit);
+      const D = Math.max(...arr.map((j) => j.deadline));
+      const slots = Array(D + 1).fill(null);
+      let ops = Math.ceil(n * Math.log2(n + 1)); // sort cost
+      for (const job of arr) {
+        for (let t = 1; t <= Math.min(D, job.deadline); t += 1) {
+          ops += 1;
+          if (!slots[t]) { slots[t] = job; break; }
+        }
+      }
+      return ops;
+    }
+
+    function renderGrowthChart() {
+      const svg = el.growthSvg;
+      svg.innerHTML = "";
+
+      const maxN = Number(el.growthN.value);
+      el.growthNLabel.textContent = String(maxN);
+
+      const points = [];
+      const edfPoints = [];
+      const theoGreedy = [];
+      const theoAlt = [];
+
+      for (let n = 4; n <= maxN; n += 2) {
+        points.push([n, simulateOpsForN(n)]);
+        edfPoints.push([n, simulateEDFOpsForN(n)]);
+        theoGreedy.push([n, n * Math.log2(n) + n * n]);
+        if (n <= 22) theoAlt.push([n, Math.pow(2, n)]);
+      }
+
+      // Base Y scale on greedy + EDF + theoretical curve; 2^n intentionally exits the chart boundary
+      const allY = points.concat(edfPoints).concat(theoGreedy).map((p) => p[1]);
+      const maxY = Math.max(...allY);
+      const minY = 0;
+      const W = 1050;
+      const H = 250;
+      const left = 60;
+      const right = 20;
+      const top = 16;
+      const bottom = 42;
+      const plotW = W - left - right;
+      const plotH = H - top - bottom;
+
+      function sx(x) {
+        return left + ((x - 4) / (maxN - 4 || 1)) * plotW;
+      }
+
+      function sy(y) {
+        return top + plotH - ((y - minY) / (maxY - minY || 1)) * plotH;
+      }
+
+      for (let g = 0; g <= 5; g += 1) {
+        const gy = top + (g / 5) * plotH;
+        const line = rectNode(left, gy, plotW, 1, "#22303b", "#22303b", 0, 0);
+        svg.appendChild(line);
+      }
+
+      svg.appendChild(textNode(18, top + 8, "ops", 12, "#9cb2c3", "600", "Courier New"));
+      svg.appendChild(textNode(W / 2, H - 10, "n (number of jobs)", 12, "#9cb2c3", "600", "Courier New", "middle"));
+
+      const axisX = rectNode(left, H - bottom, plotW, 2, "#60788f", "#60788f", 0, 0);
+      const axisY = rectNode(left, top, 2, plotH, "#60788f", "#60788f", 0, 0);
+      svg.appendChild(axisX);
+      svg.appendChild(axisY);
+
+      function drawPolyline(arr, color, width, dash = "") {
+        const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+        poly.setAttribute("fill", "none");
+        poly.setAttribute("stroke", color);
+        poly.setAttribute("stroke-width", String(width));
+        if (dash) poly.setAttribute("stroke-dasharray", dash);
+        poly.setAttribute("points", arr.map((p) => `${sx(p[0])},${sy(p[1])}`).join(" "));
+        svg.appendChild(poly);
+      }
+
+      drawPolyline(points, "#4dabf7", 2.8);
+      drawPolyline(edfPoints, "#ff9f43", 2.1);
+      drawPolyline(theoGreedy, "#42d392", 2.1, "6 4");
+      drawPolyline(theoAlt, "#ff6b6b", 2.1, "3 4");
+
+      points.forEach((p) => {
+        svg.appendChild(rectNode(sx(p[0]) - 2, sy(p[1]) - 2, 4, 4, "#4dabf7", "#4dabf7", 1, 0));
+      });
+      edfPoints.forEach((p) => {
+        svg.appendChild(rectNode(sx(p[0]) - 2, sy(p[1]) - 2, 4, 4, "#ff9f43", "#ff9f43", 1, 0));
+      });
+
+      const legendY = 20;
+      svg.appendChild(rectNode(560, legendY - 10, 470, 74, "#131b23", "#32414d", 8, 1));
+      svg.appendChild(textNode(575, legendY + 8, "Blue: Greedy actual ops", 12, "#4dabf7", "600", "Avenir Next"));
+      svg.appendChild(textNode(575, legendY + 25, "Orange: EDF actual ops (comparison)", 12, "#ff9f43", "600", "Avenir Next"));
+      svg.appendChild(textNode(575, legendY + 42, "Green dashed: O(n log n + n\u00b2) theoretical", 12, "#42d392", "600", "Avenir Next"));
+      svg.appendChild(textNode(575, legendY + 59, "Red dashed: 2\u207f brute force (exits chart n>22)", 12, "#ff6b6b", "600", "Avenir Next"));
+    }
+
+    function attachEvents() {
+      el.buildBtn.addEventListener("click", build);
+      el.stepBtn.addEventListener("click", () => {
+        if (!state.steps.length) return;
+        stopPlay();
+        setStatus("Paused");
+        nextStep();
+      });
+      el.playBtn.addEventListener("click", play);
+      el.pauseBtn.addEventListener("click", () => {
+        if (!state.steps.length) return;
+        stopPlay();
+        setStatus("Paused");
+      });
+      el.resetBtn.addEventListener("click", resetAll);
+
+      el.speedRange.addEventListener("input", () => {
+        state.speed = Number(el.speedRange.value);
+        el.speedLabel.textContent = `${state.speed.toFixed(2)}x`;
+        if (state.status === "Playing") {
+          play();
+        }
+      });
+
+      el.presetA.addEventListener("click", () => {
+        el.jobsInput.value = "J1:100:2, J2:19:1, J3:27:2, J4:25:1, J5:15:3";
+        setActivePreset(el.presetA);
+        setStatus("Idle");
+      });
+
+      el.presetB.addEventListener("click", () => {
+        el.jobsInput.value = "A:35:1, B:30:1, C:50:2, D:40:2, E:45:3, F:20:3";
+        setActivePreset(el.presetB);
+        setStatus("Idle");
+      });
+
+      el.presetC.addEventListener("click", () => {
+        el.jobsInput.value = "W1:20:6, W2:19:6, W3:18:6, W4:17:6, W5:16:6, W6:15:6, W7:14:6, W8:13:6";
+        setActivePreset(el.presetC);
+        setStatus("Idle");
+      });
+
+      el.presetD.addEventListener("click", () => {
+        // GA/GB: low-profit d=1 jobs; EDF schedules GA first wasting slot 1 (profit=5)
+        // Greedy skips them, packs GC+GD+GE (240) vs EDF's GA+GC+GE (165)
+        el.jobsInput.value = "GA:5:1, GB:3:1, GC:100:2, GD:80:2, GE:60:3, GF:50:3";
+        setActivePreset(el.presetD);
+        setStatus("Idle");
+      });
+
+      el.jobsInput.addEventListener("input", () => {
+        setActivePreset(null);
+      });
+
+      el.disableSorting.addEventListener("change", () => {
+        state.disableSorting = el.disableSorting.checked;
+        if (state.steps.length) {
+          build();
+        }
+      });
+
+      el.growthN.addEventListener("input", debounce(renderGrowthChart, 80));
+
+      // Single delegated listener for history table — avoids re-binding on every render
+      el.historyBody.addEventListener("click", (ev) => {
+        const tr = ev.target.closest("tr[data-step]");
+        if (tr) prevToStep(Number(tr.dataset.step));
+      });
+
+      // Keyboard shortcuts: arrow keys to step, space to play/pause
+      document.addEventListener("keydown", (ev) => {
+        if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+        if (ev.key === "ArrowRight") {
+          if (!state.steps.length) return;
+          stopPlay();
+          setStatus("Paused");
+          nextStep();
+        } else if (ev.key === "ArrowLeft") {
+          prevToStep(Math.max(0, state.currentStep - 1));
+        } else if (ev.key === " ") {
+          ev.preventDefault();
+          if (state.status === "Playing") {
+            stopPlay();
+            setStatus("Paused");
+          } else if (state.steps.length) {
+            play();
+          }
+        }
+      });
+    }
+
+    function debounce(fn, ms) {
+      let t;
+      return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+    }
+
+    function init() {
+      addPseudoPanel();
+      attachEvents();
+      setStatus("Idle");
+      renderSchedulingOrder(null);
+      renderGrowthChart();
+      updateImpactPanels();
+    }
+
+    init();
+  </script>
+</body>
+</html>
