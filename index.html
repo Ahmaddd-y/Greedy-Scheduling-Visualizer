@@ -9,15 +9,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #000000;
       --panel: #0c0c0c;
       --panel-2: #161616;
       --ink: #f0f0f0;
       --muted: #888888;
       --accent: #38bdf8;
-      --good: #42d392;
       --warn: #ff6b6b;
-      --busy: #4dabf7;
       --line: #222222;
       --chip: #1a1a1a;
       --glow: rgba(56, 189, 248, 0.25);
@@ -37,7 +34,7 @@
     body {
       margin: 0;
       font-family: var(--sans);
-      background: linear-gradient(160deg, #000000 0%, #0a0a0a 45%, #000000 100%);
+      background: linear-gradient(160deg, #050505 0%, #000000 45%, #050505 100%);
       color: var(--ink);
       min-height: 100vh;
     }
@@ -56,19 +53,21 @@
     }
 
     .page {
+      --left-w: clamp(280px, 38vw, 420px);
+      --gap: clamp(12px, 3vw, 20px);
       max-width: 1500px;
       margin: 0 auto;
-      padding: 22px 20px;
+      padding: clamp(12px, 4vw, 22px) clamp(12px, 3vw, 20px);
       display: grid;
-      grid-template-columns: 420px 1fr;
-      gap: 20px;
+      grid-template-columns: var(--left-w) var(--gap) 1fr;
+      row-gap: var(--gap);
       position: relative;
       z-index: 1;
     }
 
     .left, .right {
-      background: linear-gradient(160deg, #111111 0%, #080808 60%, #000000 100%);
-      border: 1px solid #2a2a2a;
+      background: linear-gradient(160deg, #1e1e1e 0%, #141414 60%, #0a0a0a 100%);
+      border: 1px solid #383838;
       border-radius: 18px;
       overflow: hidden;
       box-shadow:
@@ -82,7 +81,7 @@
     }
 
     .left:hover, .right:hover {
-      border-color: #383838;
+      border-color: #4a4a4a;
       box-shadow:
         0 2px 0 rgba(255,255,255,0.05) inset,
         0 -1px 0 rgba(0,0,0,0.8) inset,
@@ -106,7 +105,7 @@
 
     h1 {
       margin: 0 0 4px;
-      font-size: 1.38rem;
+      font-size: clamp(1.1rem, 4vw, 1.38rem);
       font-family: 'Playfair Display', Georgia, serif;
       font-weight: 800;
       letter-spacing: 0.01em;
@@ -115,7 +114,7 @@
 
     h2 {
       margin: 0 0 12px;
-      font-size: 0.97rem;
+      font-size: clamp(0.82rem, 2.2vw, 0.97rem);
       color: #38bdf8;
       letter-spacing: 0.25px;
       display: inline-block;
@@ -136,7 +135,7 @@
     p, li, label, summary {
       color: var(--ink);
       line-height: 1.5;
-      font-size: 0.92rem;
+      font-size: clamp(0.8rem, 1.8vw, 0.92rem);
     }
 
     .muted {
@@ -174,8 +173,20 @@
     .btn-row {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
+      gap: clamp(6px, 1.5vw, 8px);
       margin-top: 10px;
+    }
+
+    @media (max-width: 980px) {
+      .btn-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .btn-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     button {
@@ -183,9 +194,9 @@
       border: 1px solid #303030;
       background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
       color: var(--ink);
-      padding: 8px 6px;
+      padding: clamp(6px, 1.5vw, 8px) clamp(4px, 1vw, 6px);
       border-radius: 9px;
-      font-size: 0.78rem;
+      font-size: clamp(0.68rem, 1.5vw, 0.78rem);
       font-weight: 600;
       cursor: pointer;
       letter-spacing: 0.2px;
@@ -236,20 +247,6 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 7px;
-    }
-
-    .chip {
-      background: var(--chip);
-      border: 1px solid #303030;
-      border-radius: 999px;
-      padding: 3px 9px;
-      display: inline-flex;
-      align-items: center;
-      font-size: 0.76rem;
-      color: var(--muted);
-      margin-right: 6px;
-      margin-bottom: 4px;
-      font-family: var(--mono);
     }
 
     .kv {
@@ -396,7 +393,7 @@
 
     #vizSvg {
       width: 100%;
-      height: 420px;
+      height: clamp(300px, 50vw, 420px);
       background:
         radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.04) 0%, transparent 60%),
         linear-gradient(180deg, #141414 0%, #080808 50%, #000000 100%);
@@ -407,6 +404,7 @@
         inset 0 1px 0 rgba(255,255,255,0.06),
         inset 0 -1px 0 rgba(0,0,0,0.5),
         0 4px 20px rgba(0,0,0,0.5);
+      display: block;
     }
 
     .slot {
@@ -439,9 +437,10 @@
       border: 1px solid #282828;
       border-radius: 10px;
       overflow: hidden;
-      max-height: 260px;
+      max-height: clamp(200px, 40vh, 320px);
       overflow-y: auto;
       background: #0c0c0c;
+      width: 100%;
     }
 
     .history-wrap::-webkit-scrollbar,
@@ -471,13 +470,14 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.79rem;
+      font-size: clamp(0.7rem, 1.5vw, 0.79rem);
     }
 
     th, td {
       border-bottom: 1px solid #222222;
-      padding: 7px 7px;
+      padding: clamp(5px, 1.2vw, 7px) clamp(4px, 1vw, 7px);
       text-align: left;
+      word-break: break-word;
     }
 
     tbody tr:nth-child(even) {
@@ -515,13 +515,13 @@
     }
 
     .pseudo-panel {
-      max-height: 265px;
+      max-height: clamp(180px, 35vh, 300px);
       overflow: auto;
       border: 1px solid #262626;
       border-radius: 10px;
       background: #0c0c0c;
       font-family: var(--mono);
-      font-size: 0.83rem;
+      font-size: clamp(0.75rem, 1.6vw, 0.83rem);
       padding: 6px 0;
     }
 
@@ -614,11 +614,12 @@
 
     #growthSvg {
       width: 100%;
-      height: 230px;
+      height: clamp(150px, 30vh, 250px);
       background: linear-gradient(180deg, #0c0c0c 0%, #000000 100%);
       border: 1px solid #262626;
       border-radius: 12px;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
+      display: block;
     }
 
     .compare-box {
@@ -756,13 +757,13 @@
       position: fixed;
       z-index: 999;
       pointer-events: none;
-      max-width: 330px;
+      max-width: clamp(240px, 90vw, 330px);
       background: #000000;
       color: #f0f0f0;
       border: 1px solid #3a3a3a;
       border-radius: 8px;
-      padding: 7px 8px;
-      font-size: 0.78rem;
+      padding: clamp(6px, 1.5vw, 8px) clamp(6px, 1.5vw, 8px);
+      font-size: clamp(0.7rem, 1.5vw, 0.78rem);
       line-height: 1.35;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
       opacity: 0;
@@ -774,6 +775,64 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* ── Resizer (Pull Tab) ── */
+    .resizer-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: col-resize;
+      user-select: none;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+    }
+    .resizer-bar {
+      width: 4px;
+      height: 40px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      transition: background 150ms ease, transform 150ms ease, height 150ms ease;
+    }
+    .resizer-container:hover .resizer-bar,
+    .resizer-container.dragging .resizer-bar {
+      background: var(--accent);
+      transform: scaleX(1.5);
+      height: 60px;
+    }
+
+    /* ── Collapsible Sections ── */
+    details.section-details {
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+    }
+    details.section-details:hover {
+      border: none;
+      background: transparent;
+    }
+    .section-summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      list-style: none;
+    }
+    .section-summary::-webkit-details-marker {
+      display: none;
+    }
+    .section-summary::before {
+      content: "▼";
+      font-size: 0.7rem;
+      color: var(--accent);
+      transition: transform 150ms ease;
+    }
+    details.section-details:not([open]) .section-summary::before {
+      transform: rotate(-90deg);
+    }
+    .section-summary h2 { margin: 0; }
+    .section-content { margin-top: 12px; }
 
     @keyframes panelIn {
       from {
@@ -799,6 +858,208 @@
 
       #vizSvg {
         height: 460px;
+      }
+
+      .resizer-container {
+        display: none;
+      }
+      .chart-resizer-container {
+        height: 12px;
+        margin: 6px 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page {
+        padding: clamp(10px, 3vw, 14px) clamp(10px, 2.5vw, 12px);
+        gap: clamp(10px, 2.5vw, 14px);
+      }
+
+      .btn-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .preset-row {
+        grid-template-columns: 1fr;
+      }
+
+      .kv {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .legend {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .legend-item {
+        width: 100%;
+      }
+
+      #growthSvg {
+        height: 180px;
+      }
+
+      .order-chips, .concept-grid {
+        flex-direction: column;
+      }
+
+      .order-chip, .concept-box {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 12px;
+      }
+
+      .btn-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .preset-row {
+        grid-template-columns: 1fr;
+      }
+
+      .kv {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .stat-card {
+        padding: 8px;
+      }
+
+      .stat-label {
+        font-size: 0.65rem;
+      }
+
+      .stat-value {
+        font-size: 1rem;
+      }
+
+      #vizSvg {
+        height: clamp(280px, 60vw, 360px);
+      }
+
+      .section {
+        padding: clamp(10px, 2.5vw, 16px) clamp(10px, 2vw, 18px);
+      }
+
+      table {
+        font-size: 0.7rem;
+      }
+
+      th, td {
+        padding: 4px 3px;
+      }
+
+      .legend-item {
+        font-size: 0.68rem;
+        padding: 3px 7px;
+      }
+
+      .history-wrap {
+        max-height: clamp(180px, 50vh, 280px);
+      }
+
+      .pseudo-panel {
+        max-height: clamp(150px, 35vh, 250px);
+        font-size: 0.72rem;
+      }
+
+      .code-line {
+        grid-template-columns: 28px 1fr;
+        gap: 6px;
+        padding: 4px 10px;
+      }
+
+      .code-line .ln {
+        font-size: 0.7rem;
+      }
+
+      .explain {
+        min-height: 70px;
+        font-size: 0.82rem;
+        padding: 10px;
+      }
+
+      details {
+        padding: 8px 10px;
+      }
+
+      summary {
+        font-size: 0.88rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page {
+        gap: 10px;
+        padding: 8px;
+      }
+
+      h1 {
+        font-size: 1rem;
+        margin-bottom: 2px;
+      }
+
+      h2 {
+        font-size: 0.8rem;
+        margin-bottom: 8px;
+      }
+
+      .btn-row {
+        grid-template-columns: 1fr;
+      }
+
+      .toggle-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 6px 8px;
+      }
+
+      .toggle-row input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+      }
+
+      input[type="range"] {
+        height: 18px;
+      }
+
+      #vizSvg {
+        height: clamp(250px, 70vw, 300px);
+      }
+
+      .legend {
+        gap: 6px;
+      }
+
+      .order-mode {
+        font-size: 0.7rem;
+      }
+
+      .order-title {
+        font-size: 0.68rem;
+      }
+
+      .narrative-label {
+        font-size: 0.65rem;
+      }
+
+      .narrative-text {
+        font-size: 0.8rem;
+      }
+
+      .compare-box {
+        font-size: 0.8rem;
+        padding: 8px 10px;
       }
     }
 
@@ -828,21 +1089,31 @@
       box-shadow: 0 4px 16px rgba(56,189,248,0.25);
     }
 
+    body.light .resizer-bar {
+      background: rgba(0, 0, 0, 0.15);
+    }
+    body.light details.section-details, body.light details.section-details:hover {
+      border: none;
+      background: transparent;
+    }
+
     /* ── Light Mode ── */
     body.light {
-      --bg: #f0f2f5;
       --panel: #ffffff;
       --panel-2: #f5f5f5;
       --ink: #1a1a1a;
       --muted: #6b7280;
       --accent: #0284c7;
-      --good: #16a34a;
       --warn: #dc2626;
-      --busy: #2563eb;
       --line: #e2e8f0;
       --chip: #f1f5f9;
       --glow: rgba(2, 132, 199, 0.2);
-      background: linear-gradient(160deg, #f8fafc 0%, #f1f5f9 45%, #f8fafc 100%);
+      background: linear-gradient(160deg, #e2e8f0 0%, #cbd5e1 45%, #e2e8f0 100%);
+    }
+    body.light::before {
+      background-image:
+        linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
     }
     body.light *::selection { background: rgba(2,132,199,0.15); color: #1a1a1a; }
     body.light #themeToggle {
@@ -855,12 +1126,12 @@
       box-shadow: 0 4px 16px rgba(2,132,199,0.2);
     }
     body.light .left, body.light .right {
-      background: linear-gradient(160deg, #ffffff 0%, #fafafa 60%, #f5f7fa 100%);
-      border-color: #e2e8f0;
+      background: linear-gradient(160deg, #ffffff 0%, #fcfcfc 60%, #f8fafc 100%);
+      border-color: #cbd5e1;
       box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 16px 40px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04);
     }
     body.light .left:hover, body.light .right:hover {
-      border-color: #cbd5e1;
+      border-color: #94a3b8;
       box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 20px 48px rgba(0,0,0,0.09), 0 4px 14px rgba(2,132,199,0.05);
     }
     body.light .section { border-top-color: #e2e8f0; }
@@ -893,7 +1164,6 @@
       box-shadow: 0 0 0 2px rgba(2,132,199,0.2);
     }
     body.light button:active { box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-    body.light .chip { background: #f1f5f9; border-color: #e2e8f0; color: #6b7280; }
     body.light .stat-card { background: #f9fafb; border-color: #e5e7eb; }
     body.light .stat-card:hover { background: #f0f9ff; border-color: #bae6fd; }
     body.light .stat-value { color: #1a1a1a; }
@@ -952,6 +1222,60 @@
     body.light .narrative-text strong { color: #1a1a1a; }
     body.light .narrative-divider { border-top-color: #e5e7eb; }
     body.light .custom-tooltip { background: #ffffff; color: #1a1a1a; border-color: #cbd5e1; box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+
+    .warning-banner {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+      border: 1px solid #ff5252;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-size: 0.9rem;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+      display: none;
+    }
+
+    .warning-banner.show {
+      display: block;
+      animation: slideIn 200ms ease-out;
+    }
+
+    .mode-indicator {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .mode-indicator.experimental {
+      background: rgba(255, 107, 107, 0.15);
+      border-color: #ff6b6b;
+      color: #ff6b6b;
+    }
+
+    body.light .warning-banner {
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      border-color: #991b1b;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+    }
+
+    body.light .mode-indicator {
+      background: rgba(2, 132, 199, 0.1);
+      border-color: #0284c7;
+      color: #0284c7;
+    }
+
+    body.light .mode-indicator.experimental {
+      background: rgba(220, 38, 38, 0.1);
+      border-color: #dc2626;
+      color: #dc2626;
+    }
   </style>
 </head>
 <body>
@@ -960,11 +1284,21 @@
     <aside class="left">
       <div class="section">
         <h1>Job Scheduling with Deadlines</h1>
-        <p class="muted">Greedy visualizer for <strong>BCS 309</strong>. Every job takes 1 time slot. Goal: maximize profit.</p>
+        <p style="margin: 4px 0 8px; font-size: 0.92rem; color: #38bdf8; font-weight: 600;">Ahmad Karasi</p>
+        <p class="muted">Greedy visualizer for <strong>BCS 309</strong>. <strong>Constraint:</strong> Each job takes exactly 1 time slot. Goal: maximize profit.</p>
+      </div>
+
+      <div id="modeIndicator" class="mode-indicator" style="display: none;margin-top: 8px;">
+        ⚠️ Unsorted Simulation
+      </div>
+
+      <div id="warningBanner" class="warning-banner">
+        ⚠️ <strong>Experimental Mode:</strong> Disabling sorting breaks the greedy property. This is not the standard Greedy Job Scheduling algorithm. Compare the profit with sorting enabled to see the impact of the sort step.
       </div>
 
       <div class="section">
         <h2>Input</h2>
+        <p class="muted" style="font-size: 0.85rem; margin-bottom: 8px;"><strong>Note:</strong> Each job must have <strong>positive profit</strong> (>0). Deadline can be 1–100. Jobs are sorted by profit when enabled.</p>
         <label for="jobsInput">Jobs format: <span class="muted">ID:profit:deadline, ...</span></label>
         <textarea id="jobsInput" rows="3">J1:100:2, J2:19:1, J3:27:2, J4:25:1, J5:15:3</textarea>
         <div class="preset-row" style="margin-top: 8px;">
@@ -987,6 +1321,7 @@
           <button id="playBtn">Play</button>
           <button id="pauseBtn">Pause</button>
           <button id="resetBtn">Reset</button>
+          <button id="clearBtn">Clear</button>
         </div>
 
         <div class="speed-wrap">
@@ -1018,7 +1353,7 @@
         <h2>Operation Counters (CLO-1)</h2>
         <div class="kv">
           <div class="stat-card">
-            <div class="stat-label">Comparator Calls</div>
+            <div class="stat-label" title="Browser-dependent: V8 (Chrome) vs SpiderMonkey (Firefox) run different internal sorting algorithms, resulting in different comparator call counts. Theoretical worst-case is O(n log n).">Comparator Calls <span style="cursor: help; color: #888;">ⓘ</span></div>
             <div class="stat-value" id="sortCmp">0</div>
           </div>
           <div class="stat-card">
@@ -1047,6 +1382,10 @@
       </div>
     </aside>
 
+    <div id="resizerContainer" class="resizer-container" aria-hidden="true">
+      <div class="resizer-bar"></div>
+    </div>
+
     <main class="right">
       <div class="section">
         <h2>Visualization</h2>
@@ -1062,7 +1401,7 @@
         <svg id="vizSvg" viewBox="0 0 1050 440" aria-label="Scheduling visualization"></svg>
       </div>
 
-      <div class="section">
+      <div class="section" id="historySection" style="display: none;">
         <h2>History Table (Click Row to Jump)</h2>
         <div class="history-wrap">
           <table>
@@ -1072,7 +1411,7 @@
                 <th>Action</th>
                 <th>Job</th>
                 <th>Slot</th>
-                <th>Profit</th>
+                <th>Value</th>
               </tr>
             </thead>
             <tbody id="historyBody"></tbody>
@@ -1128,82 +1467,93 @@
       </div>
 
       <div class="section">
-        <h2>CLO-1: Complexity &amp; Growth Curves</h2>
+        <details open class="section-details">
+          <summary class="section-summary"><h2>CLO-1: Complexity &amp; Growth Curves</h2></summary>
+          <div class="section-content">
+            <details open>
+              <summary>Complexity Analysis</summary>
+              <table class="cplx-table" style="margin-top:8px;width:100%;">
+                <thead>
+                  <tr>
+                    <th style="width:72px;">Case</th>
+                    <th style="width:148px;">Time</th>
+                    <th>Reason</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Best</td>
+                    <td style="color:#42d392;font-family:var(--mono);">O(n log n)</td>
+                    <td>All jobs land in the first slot checked. O(n) slot assignment; sorting dominates.</td>
+                  </tr>
+                  <tr>
+                    <td>Worst</td>
+                    <td style="color:#ff6b6b;font-family:var(--mono);">O(n log n + n&sup2;)</td>
+                    <td>All deadlines equal D. Job k checks k slots: 1+2+&hellip;+n = n(n+1)/2. Load Preset C to trigger this.</td>
+                  </tr>
+                  <tr>
+                    <td>Average</td>
+                    <td style="color:#38bdf8;font-family:var(--mono);">O(n log n + n&sup2;)</td>
+                    <td>Slot search dominates on mixed inputs — asymptotically same as worst.</td>
+                  </tr>
+                  <tr>
+                    <td>Space</td>
+                    <td style="color:#4dabf7;font-family:var(--mono);">O(n)</td>
+                    <td>slots[] array of size D &le; n. Iterative — no recursion stack. <strong>Note:</strong> Theory assumes D ≤ n; this visualizer allows deadlines up to 100 but respects the actual deadline values for timeline display.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </details>
 
-        <details open>
-          <summary>Complexity Analysis</summary>
-          <table class="cplx-table" style="margin-top:8px;width:100%;">
-            <thead>
-              <tr>
-                <th style="width:72px;">Case</th>
-                <th style="width:148px;">Time</th>
-                <th>Reason</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Best</td>
-                <td style="color:#42d392;font-family:var(--mono);">O(n log n)</td>
-                <td>All jobs land in the first slot checked. O(n) slot assignment; sorting dominates.</td>
-              </tr>
-              <tr>
-                <td>Worst</td>
-                <td style="color:#ff6b6b;font-family:var(--mono);">O(n log n + n&sup2;)</td>
-                <td>All deadlines equal D. Job k checks k slots: 1+2+&hellip;+n = n(n+1)/2. Load Preset C to trigger this.</td>
-              </tr>
-              <tr>
-                <td>Average</td>
-                <td style="color:#38bdf8;font-family:var(--mono);">O(n log n + n&sup2;)</td>
-                <td>Slot search dominates on mixed inputs — asymptotically same as worst.</td>
-              </tr>
-              <tr>
-                <td>Space</td>
-                <td style="color:#4dabf7;font-family:var(--mono);">O(n)</td>
-                <td>slots[] array of size D &le; n. Iterative — no recursion stack.</td>
-              </tr>
-            </tbody>
-          </table>
+            <label for="growthN" style="margin-top:10px;display:block;">Input size n for chart: <strong id="growthNLabel">30</strong></label>
+            <p class="muted" style="margin:3px 0 6px;">Blue = actual greedy ops &nbsp;|&nbsp; Orange = EDF ops &nbsp;|&nbsp; Green dashed = O(n log n + n&sup2;) &nbsp;|&nbsp; Red dashed = 2&sup;n (brute force)</p>
+            <input id="growthN" type="range" min="8" max="120" value="30" step="2" />
+            <svg id="growthSvg" viewBox="0 0 1050 250" aria-label="Growth chart"></svg>
+
+            <div class="compare-box" id="worstCaseNote">
+              <strong>Worst-case demo (Preset C):</strong> All 8 jobs share deadline&nbsp;6. The first job checks 1 slot, the second checks 2, &hellip;, yielding 1+2+3+4+5+6+6+6 = 33 slot checks — the full quadratic term. Load Preset C and watch the Slot Checks counter climb.
+            </div>
+          </div>
         </details>
-
-        <label for="growthN" style="margin-top:10px;display:block;">Input size n for chart: <strong id="growthNLabel">30</strong></label>
-        <p class="muted" style="margin:3px 0 6px;">Blue = actual greedy ops &nbsp;|&nbsp; Orange = EDF ops &nbsp;|&nbsp; Green dashed = O(n log n + n&sup2;) &nbsp;|&nbsp; Red dashed = 2&sup;n (brute force)</p>
-        <input id="growthN" type="range" min="8" max="120" value="30" step="2" />
-        <svg id="growthSvg" viewBox="0 0 1050 250" aria-label="Growth chart"></svg>
-
-        <div class="compare-box" id="worstCaseNote">
-          <strong>Worst-case demo (Preset C):</strong> All 8 jobs share deadline&nbsp;6. The first job checks 1 slot, the second checks 2, &hellip;, yielding 1+2+3+4+5+6+6+6 = 33 slot checks — the full quadratic term. Load Preset C and watch the Slot Checks counter climb.
-        </div>
       </div>
 
       <div class="section">
-        <h2>CLO-2: Sorting &amp; Searching</h2>
-        <div class="concept-grid" style="margin-bottom:10px;">
-          <div class="concept-box good">
-            <strong>Role of Sorting (Line 1)</strong>: Jobs are sorted by profit descending via comparison sort &mdash; O(n&nbsp;log&nbsp;n). This guarantees the highest-value candidates are evaluated first. Without it, a low-profit job can occupy a slot that a high-profit job needs.
+        <details open class="section-details">
+          <summary class="section-summary"><h2>CLO-2: Sorting &amp; Searching</h2></summary>
+          <div class="section-content">
+            <div class="concept-grid" style="margin-bottom:10px;">
+              <div class="concept-box good">
+                <strong>Role of Sorting (Line 1)</strong>: Jobs are sorted by profit descending via comparison sort &mdash; O(n&nbsp;log&nbsp;n). This guarantees the highest-value candidates are evaluated first. Without it, a low-profit job can occupy a slot that a high-profit job needs.
+              </div>
+              <div class="concept-box">
+                <strong>Role of Searching (Lines 4&ndash;6)</strong>: For each job, a backward linear scan finds the latest free slot before its deadline &mdash; O(n) per job, O(n&sup2;) total. Searching <em>latest-first</em> is critical: it preserves earlier slots for future tighter-deadline jobs.
+              </div>
+            </div>
+            <p style="margin-bottom:6px;"><strong>Interactive Impact Analysis</strong> &mdash; toggle <em>Disable Sorting</em> in the Input panel, rebuild, and compare profits below:</p>
+            <div class="compare-box" id="sortingImpact"></div>
           </div>
-          <div class="concept-box">
-            <strong>Role of Searching (Lines 4&ndash;6)</strong>: For each job, a backward linear scan finds the latest free slot before its deadline &mdash; O(n) per job, O(n&sup2;) total. Searching <em>latest-first</em> is critical: it preserves earlier slots for future tighter-deadline jobs.
-          </div>
-        </div>
-        <p style="margin-bottom:6px;"><strong>Interactive Impact Analysis</strong> &mdash; toggle <em>Disable Sorting</em> in the Input panel, rebuild, and compare profits below:</p>
-        <div class="compare-box" id="sortingImpact"></div>
+        </details>
       </div>
 
       <div class="section">
-        <h2>CLO-3: Greedy Paradigm</h2>
-        <div class="concept-grid" style="margin-bottom:10px;">
-          <div class="concept-box good">
-            <strong>Paradigm: Greedy.</strong> At each step, pick the highest-profit remaining job and assign it to the latest available slot before its deadline. No backtracking. One pass through the sorted list.
+        <details open class="section-details">
+          <summary class="section-summary"><h2>CLO-3: Greedy Paradigm</h2></summary>
+          <div class="section-content">
+            <div class="concept-grid" style="margin-bottom:10px;">
+              <div class="concept-box good">
+                <strong>Paradigm: Greedy.</strong> At each step, pick the highest-profit remaining job and assign it to the latest available slot before its deadline. No backtracking. One pass through the sorted list.
+              </div>
+              <div class="concept-box">
+                <strong>Why it works &mdash; Exchange Argument:</strong> Suppose an optimal schedule OPT skips job&nbsp;J (high profit) and uses job&nbsp;K (lower profit) in the same slot. Swapping K&nbsp;&rarr;&nbsp;J can only increase total profit. By induction, every greedy choice is compatible with some optimal solution.
+              </div>
+              <div class="concept-box warn">
+                <strong>Counterexample &mdash; EDF is Suboptimal:</strong> Earliest-Deadline-First schedules GA(profit=5,&nbsp;d=1) first because it has the earliest deadline, wasting slot&nbsp;1 and blocking GD(profit=80). Greedy bypasses GA entirely and packs GC+GD+GE for profit&nbsp;240 vs EDF&rsquo;s&nbsp;165. Load <em>Preset D</em> to see this comparison.
+              </div>
+            </div>
+            <p style="margin-bottom:6px;"><strong>Live comparison on current input:</strong></p>
+            <div class="compare-box" id="paradigmCompare"></div>
           </div>
-          <div class="concept-box">
-            <strong>Why it works &mdash; Exchange Argument:</strong> Suppose an optimal schedule OPT skips job&nbsp;J (high profit) and uses job&nbsp;K (lower profit) in the same slot. Swapping K&nbsp;&rarr;&nbsp;J can only increase total profit. By induction, every greedy choice is compatible with some optimal solution.
-          </div>
-          <div class="concept-box warn">
-            <strong>Counterexample &mdash; EDF fails:</strong> Earliest-Deadline-First schedules GA(profit=5,&nbsp;d=1) first because it has the earliest deadline, wasting slot&nbsp;1 and blocking GD(profit=80). Greedy bypasses GA entirely and packs GC+GD+GE for profit&nbsp;240 vs EDF&rsquo;s&nbsp;165. Load <em>Preset D</em> to see this.
-          </div>
-        </div>
-        <p style="margin-bottom:6px;"><strong>Live comparison on current input:</strong></p>
-        <div class="compare-box" id="paradigmCompare"></div>
+        </details>
       </div>
     </main>
   </div>
@@ -1245,6 +1595,7 @@
       playBtn: document.getElementById("playBtn"),
       pauseBtn: document.getElementById("pauseBtn"),
       resetBtn: document.getElementById("resetBtn"),
+      clearBtn: document.getElementById("clearBtn"),
       speedRange: document.getElementById("speedRange"),
       speedLabel: document.getElementById("speedLabel"),
       stepCounter: document.getElementById("stepCounter"),
@@ -1254,6 +1605,7 @@
       assignments: document.getElementById("assignments"),
       discarded: document.getElementById("discarded"),
       historyBody: document.getElementById("historyBody"),
+      historySection: document.getElementById("historySection"),
       stepExplain: document.getElementById("stepExplain"),
       vizSvg: document.getElementById("vizSvg"),
       pseudoPanel: document.getElementById("pseudoPanel"),
@@ -1282,7 +1634,8 @@
       disableSorting: false,
       sortedProfit: 0,
       unsortedProfit: 0,
-      edf: 0
+      edf: 0,
+      greedyProfit: 0
     };
 
     function setStatus(next) {
@@ -1304,8 +1657,8 @@
         const id = seg[0] || `J${jobs.length + 1}`;
         const profit = Number(seg[1]);
         const deadline = Number(seg[2]);
-        if (!Number.isFinite(profit) || !Number.isFinite(deadline) || deadline < 1 || profit < 0) {
-          throw new Error(`Invalid values in job ${part}`);
+        if (isNaN(profit) || !Number.isInteger(deadline) || deadline < 1) {
+          throw new Error(`Invalid values in job ${part}. Profit must be numeric and Deadline must be an integer >= 1.`);
         }
         if (deadline > 100) {
           throw new Error(`Deadline too large in job ${part} (max 100).`);
@@ -1366,21 +1719,72 @@
       if (button) button.classList.add("active");
     }
 
-    function scheduleGreedySteps(jobs, disableSorting = false) {
+    function calculateOptimalBruteForce(jobs) {
+      if (jobs.length > 12) {
+        return null;
+      }
+      
+      let maxProfit = 0;
+      
+      // Iterate through all 2^n subsets
+      for (let mask = 0; mask < (1 << jobs.length); mask++) {
+        const selected = [];
+        let profit = 0;
+        
+        for (let i = 0; i < jobs.length; i++) {
+          if (mask & (1 << i)) {
+            selected.push(jobs[i]);
+            profit += jobs[i].profit;
+          }
+        }
+        
+        if (selected.length === 0) continue;
+        
+        // Check if this subset is feasible (can be scheduled)
+        const maxDeadline = Math.max(...selected.map(j => j.deadline), 0);
+        let slots = new Array(maxDeadline).fill(null);
+        
+        // Try to schedule selected jobs in profit order (greedy scheduling)
+        const sortedSelected = selected.slice().sort((a, b) => b.profit - a.profit);
+        let feasible = true;
+        
+        for (const job of sortedSelected) {
+          let scheduled = false;
+          let d = Math.min(job.deadline, slots.length);
+          for (let j = d - 1; j >= 0; j--) {
+            if (!slots[j]) {
+              slots[j] = job;
+              scheduled = true;
+              break;
+            }
+          }
+          if (!scheduled) {
+            feasible = false;
+            break;
+          }
+        }
+        
+        if (feasible) {
+          maxProfit = Math.max(maxProfit, profit);
+        }
+      }
+      
+      return maxProfit;
+    }
+
+    function scheduleGreedySteps(jobs) {
       const steps = [];
       const working = jobs.map((j, idx) => ({ ...j, originalIndex: idx }));
       const counters = { sortCmp: 0, slotChecks: 0, assignments: 0, discarded: 0 };
 
-      const sorted = disableSorting
-        ? [...working]
-        : [...working].sort((a, b) => {
-            counters.sortCmp += 1;
-            if (b.profit !== a.profit) return b.profit - a.profit;
-            return a.deadline - b.deadline;
-          });
+      working.sort((a, b) => {
+        counters.sortCmp += 1;
+        return b.profit - a.profit;
+      });
+      const sorted = working;
 
-      const maxD = Math.max(...sorted.map((j) => j.deadline));
-      const slots = Array(maxD + 1).fill(null);
+      const maxDeadline = Math.max(...sorted.map((j) => j.deadline), 0);
+      let slots = new Array(maxDeadline).fill(null);
       const jobState = Object.fromEntries(sorted.map((j, idx) => [j.id, {
         id: j.id,
         profit: j.profit,
@@ -1392,12 +1796,12 @@
 
       function snapshot(extra = {}) {
         return {
-          slots: slots.map((s) => (s ? s.id : null)),
+          slots: [null, ...slots.map((s) => (s ? s.id : null))],
           jobs: JSON.parse(JSON.stringify(jobState)),
           counters: { ...counters },
           currentJob: extra.currentJob || null,
-          pointerSlot: Number.isInteger(extra.pointerSlot) ? extra.pointerSlot : null,
-          collisionSlots: Array.isArray(extra.collisionSlots) ? [...extra.collisionSlots] : [],
+          pointerSlot: Number.isInteger(extra.pointerSlot) ? extra.pointerSlot + 1 : null,
+          collisionSlots: Array.isArray(extra.collisionSlots) ? extra.collisionSlots.map(s => s + 1) : [],
           collisionJobs: Array.isArray(extra.collisionJobs) ? [...extra.collisionJobs] : [],
           pseudo: extra.pseudo || null,
           explanation: extra.explanation || "",
@@ -1407,16 +1811,14 @@
 
       steps.push(snapshot({
         pseudo: 1,
-        explanation: disableSorting
-          ? "Sorting disabled: jobs stay in input order for impact analysis."
-          : `Sorted ${sorted.length} jobs by profit descending. Sort comparisons used: ${counters.sortCmp}.`,
-        history: { action: disableSorting ? "Sorting disabled" : "Sort by profit", job: "-", slot: "-", profit: 0 }
+        explanation: `Sorted ${sorted.length} jobs by profit descending. Sort comparisons used: ${counters.sortCmp}.`,
+        history: { action: "Sort by profit", job: "-", slot: "-", profit: 0 }
       }));
 
       steps.push(snapshot({
         pseudo: 2,
-        explanation: `Initialized ${maxD} time slots from 1 to ${maxD}.`,
-        history: { action: "Initialize slots", job: "-", slot: `1..${maxD}`, profit: 0 }
+        explanation: `Initialized ${maxDeadline} time slots from 1 to ${maxDeadline}.`,
+        history: { action: "Initialize slots", job: "-", slot: `1..${maxDeadline}`, profit: 0 }
       }));
 
       for (let i = 0; i < sorted.length; i += 1) {
@@ -1430,18 +1832,19 @@
           history: { action: "Pick job", job: job.id, slot: "-", profit: job.profit }
         }));
 
-        let j = Math.min(maxD, job.deadline);
+        let d = Math.min(job.deadline, slots.length);
         const blockedSlots = [];
         const blockedJobs = [];
         steps.push(snapshot({
           currentJob: job.id,
-          pointerSlot: j,
+          pointerSlot: d - 1,
           pseudo: 4,
-          explanation: `Start searching from latest valid slot j=min(${maxD}, ${job.deadline})=${j}.`,
-          history: { action: "Set slot pointer", job: job.id, slot: String(j), profit: job.profit }
+          explanation: `Start searching from latest valid slot j=min(${slots.length}, ${job.deadline})-1=${d - 1}.`,
+          history: { action: "Set slot pointer", job: job.id, slot: String(d), profit: job.profit }
         }));
 
-        while (j >= 1) {
+        let assignedSlot = -1;
+        for (let j = d - 1; j >= 0; j--) {
           counters.slotChecks += 1;
           const occupied = Boolean(slots[j]);
           if (occupied) {
@@ -1453,42 +1856,45 @@
             pointerSlot: j,
             pseudo: 5,
             explanation: occupied
-              ? `Check slot ${j}: occupied by ${slots[j].id}. Keep searching left.`
-              : `Check slot ${j}: free. Job ${job.id} can be placed here.`,
-            history: { action: "Check slot", job: job.id, slot: String(j), profit: job.profit }
+              ? `Check slot ${j + 1}: occupied by ${slots[j].id}. Keep searching left.`
+              : `Check slot ${j + 1}: free. Job ${job.id} can be placed here.`,
+            history: { action: "Check slot", job: job.id, slot: String(j + 1), profit: job.profit }
           }));
 
-          if (!occupied) break;
-          j -= 1;
+          if (!occupied) {
+            slots[j] = job;
+            assignedSlot = j;
+            break;
+          }
+
           steps.push(snapshot({
             currentJob: job.id,
-            pointerSlot: j >= 1 ? j : null,
+            pointerSlot: j - 1 >= 0 ? j - 1 : null,
             pseudo: 6,
-            explanation: `Slot was occupied, so j is decremented to ${j}.`,
+            explanation: `Slot was occupied, so j is decremented to ${j - 1}.`,
             history: { action: "Move left", job: job.id, slot: String(j), profit: job.profit }
           }));
         }
 
-        if (j >= 1 && !slots[j]) {
+        if (assignedSlot !== -1) {
           steps.push(snapshot({
             currentJob: job.id,
-            pointerSlot: j,
+            pointerSlot: assignedSlot,
             pseudo: 7,
-            explanation: `j=${j} is valid (>=1), so assignment is possible.`,
-            history: { action: "Condition true", job: job.id, slot: String(j), profit: job.profit }
+            explanation: `j=${assignedSlot} is valid (>=0), so assignment is possible.`,
+            history: { action: "Condition true", job: job.id, slot: String(assignedSlot + 1), profit: job.profit }
           }));
 
-          slots[j] = job;
           jobState[job.id].visualState = "assigned";
-          jobState[job.id].assignedSlot = j;
+          jobState[job.id].assignedSlot = assignedSlot + 1;
           counters.assignments += 1;
 
           steps.push(snapshot({
             currentJob: job.id,
-            pointerSlot: j,
+            pointerSlot: assignedSlot,
             pseudo: 8,
-            explanation: `Assigned ${job.id} to slot ${j}. Total assigned jobs: ${counters.assignments}.`,
-            history: { action: "Assign", job: job.id, slot: String(j), profit: job.profit }
+            explanation: `Assigned ${job.id} to slot ${assignedSlot + 1}. Total assigned jobs: ${counters.assignments}.`,
+            history: { action: "Assign", job: job.id, slot: String(assignedSlot + 1), profit: job.profit }
           }));
         } else {
           steps.push(snapshot({
@@ -1520,64 +1926,79 @@
         }
       }
 
-      const totalProfit = slots.reduce((sum, item) => sum + (item ? item.profit : 0), 0);
+      let totalProfit = slots
+        .filter(job => job !== null)
+        .reduce((sum, job) => sum + job.profit, 0);
+        
       steps.push(snapshot({
         pseudo: 10,
         explanation: `Finished schedule. Total profit = ${totalProfit}.`,
-        history: { action: "Return result", job: "-", slot: "-", profit: totalProfit }
+        history: { action: "Return total", job: "-", slot: "-", profit: totalProfit }
       }));
 
-      return { steps, sorted, maxD };
+      return { steps, sorted, maxD: maxDeadline };
     }
 
     function scheduleWithoutSort(jobs) {
       const arr = jobs.map((j) => ({ ...j }));
-      const D = Math.max(...arr.map((j) => j.deadline));
-      const slots = Array(D + 1).fill(null);
+      const maxDeadline = Math.max(...arr.map((j) => j.deadline), 0);
+      let slots = new Array(maxDeadline).fill(null);
       for (const job of arr) {
-        for (let t = Math.min(D, job.deadline); t >= 1; t -= 1) {
-          if (!slots[t]) {
-            slots[t] = job;
+        let d = Math.min(job.deadline, slots.length);
+        for (let j = d - 1; j >= 0; j--) {
+          if (!slots[j]) {
+            slots[j] = job;
             break;
           }
         }
       }
-      return slots.reduce((s, it) => s + (it ? it.profit : 0), 0);
+      let totalProfit = slots
+        .filter(job => job !== null)
+        .reduce((sum, job) => sum + job.profit, 0);
+      return totalProfit;
     }
 
     function scheduleEDF(jobs) {
       const arr = jobs.map((j) => ({ ...j })).sort((a, b) => a.deadline - b.deadline || b.profit - a.profit);
-      const D = Math.max(...arr.map((j) => j.deadline));
-      const slots = Array(D + 1).fill(null);
+      const maxDeadline = Math.max(...arr.map((j) => j.deadline), 0);
+      let slots = new Array(maxDeadline).fill(null);
       for (const job of arr) {
-        for (let t = 1; t <= Math.min(D, job.deadline); t += 1) {
-          if (!slots[t]) {
-            slots[t] = job;
+        let d = Math.min(job.deadline, slots.length);
+        for (let j = 0; j < d; j++) {
+          if (!slots[j]) {
+            slots[j] = job;
             break;
           }
         }
       }
-      return slots.reduce((s, it) => s + (it ? it.profit : 0), 0);
+      let totalProfit = slots
+        .filter(job => job !== null)
+        .reduce((sum, job) => sum + job.profit, 0);
+      return totalProfit;
     }
 
     function build() {
       try {
+        const input = el.jobsInput.value.trim();
+        if (!input) {
+          setStatus("Idle");
+          return;
+        }
         stopPlay();
-        const jobs = parseJobs(el.jobsInput.value);
+        const jobs = parseJobs(input);
         state.rawJobs = jobs;
         state.disableSorting = el.disableSorting.checked;
-        const result = scheduleGreedySteps(jobs, state.disableSorting);
+        const result = scheduleGreedySteps(jobs);
         state.steps = result.steps;
-        // Cache sorted profit — only rerun algorithm if sorting was disabled
-        state.sortedProfit = state.disableSorting
-          ? scheduleGreedySteps(jobs, false).steps.slice(-1)[0].history.profit
-          : result.steps.slice(-1)[0].history.profit;
+        state.greedyProfit = result.steps.slice(-1)[0].history.profit;
+        state.sortedProfit = state.greedyProfit;
         state.unsortedProfit = scheduleWithoutSort(jobs);
         state.edf = scheduleEDF(jobs);
         state.currentStep = 0;
         setStatus("Ready");
+        // Hide history until user actually steps through
+        el.historySection.style.display = "none";
         renderStep();
-        renderHistory();
         updateImpactPanels();
         renderNarrative();
       } catch (err) {
@@ -1594,16 +2015,18 @@
       const idx = Math.max(0, Math.min(state.currentStep, state.steps.length - 1));
       const step = state.steps[idx];
 
+      if (!step) return;
+
       const total = state.steps.length;
       el.stepCounter.textContent = `${idx + 1} / ${total}`;
-      el.sortCmp.textContent = step.counters.sortCmp;
-      el.slotChecks.textContent = step.counters.slotChecks;
-      el.assignments.textContent = step.counters.assignments;
-      el.discarded.textContent = step.counters.discarded;
-      el.stepExplain.textContent = step.explanation;
+      el.sortCmp.textContent = String((step.counters && step.counters.sortCmp) || 0);
+      el.slotChecks.textContent = String((step.counters && step.counters.slotChecks) || 0);
+      el.assignments.textContent = String((step.counters && step.counters.assignments) || 0);
+      el.discarded.textContent = String((step.counters && step.counters.discarded) || 0);
+      el.stepExplain.textContent = step.explanation || "No explanation available.";
 
-      const profitNow = step.slots.reduce((sum, id) => {
-        if (!id) return sum;
+      const profitNow = (step.slots || []).reduce((sum, id) => {
+        if (!id || !step.jobs || !step.jobs[id]) return sum;
         const job = step.jobs[id];
         return sum + (job ? job.profit : 0);
       }, 0);
@@ -1655,12 +2078,12 @@
       }).join("");
 
       const slotChips = [];
-      for (let s = 1; s < step.slots.length; s += 1) {
+      for (let s = 1; s < step.slots.length; s++) {
         const id = step.slots[s];
         slotChips.push(`<span class="order-chip ${id ? "assigned" : ""}">S${s}:${id || "empty"}</span>`);
       }
 
-      const mode = state.disableSorting ? "Input-order mode (sorting disabled)" : "Greedy sorted-by-profit mode";
+      const mode = "Greedy sorted-by-profit mode (always enabled)";
       el.scheduleOrderPanel.innerHTML = `
         <div class="order-mode">Mode: ${mode}</div>
         <div class="order-row">
@@ -1677,6 +2100,12 @@
     function renderViz(step) {
       const svg = el.vizSvg;
       svg.innerHTML = "";
+      
+      if (!step || !step.slots || !step.jobs) {
+        svg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#888" font-size="14">No data to visualize</text>';
+        return;
+      }
+
       COLORS = buildColors();
       const isLight = document.body.classList.contains('light');
       const ac       = isLight ? "#0284c7" : "#38bdf8";
@@ -1687,111 +2116,145 @@
       const cardStroke = isLight ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.35)";
       const cardMeta = "rgba(255,255,255,0.86)";
 
-      const width = 1050;
+      // Get SVG dimensions for responsive calculations
+      const svgRect = svg.getBoundingClientRect();
+      const viewBox = svg.viewBox.baseVal;
+      const width = viewBox.width || 1050;
+      const height = viewBox.height || 440;
+      const scaling = Math.max(0.5, Math.min(1.2, svgRect.width / width));
+
+      // Base layout metrics to avoid magic numbers
+      const conf = {
+        topLabel: 38,
+        slotY: 70,
+        slotH: 64,
+        pointerY: 60,
+        labelY: 95,
+        idY: 118,
+        assignedY: 148,
+        assignedH: 56,
+        cardH: 66,
+        headOffset: 22,
+        pendingY: 218,
+        discardY: 318
+      };
+
       const maxSlots = Math.max(1, step.slots.length - 1);
-      const slotW = Math.min(86, Math.max(58, Math.floor((width - 90) / maxSlots)));
-      const gap = 8;
-      const totalW = maxSlots * slotW + (maxSlots - 1) * gap;
+      const slotW = Math.min(86, Math.max(50, Math.floor((width - 90) / Math.max(1, maxSlots))));
+      const gap = Math.max(4, Math.floor(6 * scaling));
+      const totalW = maxSlots * slotW + Math.max(0, (maxSlots - 1) * gap);
       const startX = Math.max(36, Math.floor((width - totalW) / 2));
 
-      const topLabel = textNode(34, 38, "Timeline Slots", 18, ac, "700", "Avenir Next");
+      const topLabel = textNode(34, conf.topLabel * scaling, "Timeline Slots", 18 * scaling, ac, "700", "Avenir Next");
       svg.appendChild(topLabel);
 
+      // Render slot timeline
       for (let t = 1; t <= maxSlots; t += 1) {
         const x = startX + (t - 1) * (slotW + gap);
         const occupiedId = step.slots[t];
         const isPointer = step.pointerSlot === t;
         const fill = occupiedId ? COLORS.filledSlot : COLORS.emptySlot;
 
-        const rect = rectNode(x, 70, slotW, 64, fill, isPointer ? COLORS.activeSlot : COLORS.slotStroke, 7);
+        const rect = rectNode(x, conf.slotY * scaling, slotW, conf.slotH * scaling, fill, isPointer ? COLORS.activeSlot : COLORS.slotStroke, 7, 1.5);
         rect.setAttribute("class", "slot");
-        if (step.collisionSlots.includes(t)) {
+        if (step.collisionSlots && step.collisionSlots.includes(t)) {
           rect.classList.add("collision-slot");
           rect.setAttribute("stroke", "#ff6b6b");
         }
         rect.setAttribute("stroke-width", isPointer ? "3" : "1.5");
         svg.appendChild(rect);
-        // slot top shine
+
+        // Slot shine
         const slotShine = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        slotShine.setAttribute("x", String(x + 4)); slotShine.setAttribute("y", "72");
-        slotShine.setAttribute("width", String(slotW - 8)); slotShine.setAttribute("height", "2");
+        slotShine.setAttribute("x", String(x + 4)); slotShine.setAttribute("y", String((conf.slotY + 2) * scaling));
+        slotShine.setAttribute("width", String(slotW - 8)); slotShine.setAttribute("height", String(2 * scaling));
         slotShine.setAttribute("rx", "1");
         slotShine.setAttribute("fill", shineCol);
         svg.appendChild(slotShine);
 
         const slotLabelCol = occupiedId ? "#f0f0f0" : slotTxtEmpty;
-        svg.appendChild(textNode(x + slotW / 2, 95, `S${t}`, 15, slotLabelCol, "700", "Courier New", "middle"));
+        svg.appendChild(textNode(x + slotW / 2, conf.labelY * scaling, `S${t}`, 15 * scaling, slotLabelCol, "700", "Courier New", "middle"));
 
         if (occupiedId) {
-          const j = step.jobs[occupiedId];
-          svg.appendChild(textNode(x + slotW / 2, 118, `${j.id}`, 13, slotId, "700", "Courier New", "middle"));
+          const jobIdText = String(occupiedId).substring(0, 8);
+          svg.appendChild(textNode(x + slotW / 2, conf.idY * scaling, jobIdText, 13 * scaling, slotId, "700", "Courier New", "middle"));
         } else {
-          svg.appendChild(textNode(x + slotW / 2, 118, "empty", 11, "#888888", "400", "Courier New", "middle"));
+          svg.appendChild(textNode(x + slotW / 2, conf.idY * scaling, "empty", 11 * scaling, "#888888", "400", "Courier New", "middle"));
         }
 
         if (isPointer) {
-          svg.appendChild(textNode(x + slotW / 2, 60, "t", 15, ac, "700", "Courier New", "middle"));
+          svg.appendChild(textNode(x + slotW / 2, conf.pointerY * scaling, "t", 15 * scaling, ac, "700", "Courier New", "middle"));
         }
       }
 
-      // ── Shared card-builder ────────────────────────────────────────
-      const jobsArr = Object.values(step.jobs).sort((a, b) => a.sortIndex - b.sortIndex);
-      const cardW = 128, cardH = 66, gapX = 12;
+      // Card builder with proper text truncation
+      const jobsArr = Object.values(step.jobs || {}).sort((a, b) => (a.sortIndex || 0) - (b.sortIndex || 0));
+      const cardW = 128 * scaling, cardH = conf.cardH * scaling, gapX = 12 * scaling;
+
+      const truncateText = (text, maxLen) => text && text.length > maxLen ? text.substring(0, maxLen - 1) + '…' : text;
 
       const mkCard = (job, x, y, w, h, color, titleSz, metaSz, metaTxt, showI, isCollision) => {
         const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         g.setAttribute("class", "job-group");
         if (isCollision) g.classList.add("collision-job");
         g.setAttribute("transform", `translate(${x}, ${y})`);
+        
         const shine = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         shine.setAttribute("x", "3"); shine.setAttribute("y", "1");
-        shine.setAttribute("width", String(w - 6)); shine.setAttribute("height", "2");
+        shine.setAttribute("width", String(w - 6)); shine.setAttribute("height", String(2));
         shine.setAttribute("rx", "1");
         shine.setAttribute("fill", "rgba(255,255,255,0.28)");
         g.appendChild(rectNode(0, 0, w, h, color, cardStroke, 10, 1.5));
         g.appendChild(shine);
-        g.appendChild(textNode(8, 20, String(job.id), titleSz, "#ffffff", "700", "Courier New"));
-        g.appendChild(textNode(8, 39, metaTxt, metaSz, cardMeta, "500", "Courier New"));
+        g.appendChild(textNode(8, 20, truncateText(String(job.id || "?"), 12), titleSz, "#ffffff", "700", "Courier New"));
+        g.appendChild(textNode(8, 39, truncateText(String(metaTxt), 18), metaSz, cardMeta, "500", "Courier New"));
         if (showI) g.appendChild(textNode(w - 8, 16, "i", 13, "#ffffff", "700", "Courier New", "end"));
         svg.appendChild(g);
       };
 
-      // 1. Assigned jobs — mini-cards under their slot (gap below slot bottom=134)
-      jobsArr.filter(j => j.assignedSlot).forEach(job => {
+      // 1. Assigned jobs — mini-cards under their slot (0-indexed)
+      jobsArr.filter(j => j && Number.isInteger(j.assignedSlot) && j.assignedSlot >= 0).forEach(job => {
         const slotX = startX + (job.assignedSlot - 1) * (slotW + gap);
-        mkCard(job, slotX, 148, slotW, 56, COLORS.assignedJob, 12, 11,
-          `p=${job.profit}`, step.currentJob === job.id, step.collisionJobs.includes(job.id));
+        mkCard(job, slotX, conf.assignedY * scaling, slotW, conf.assignedH * scaling, COLORS.assignedJob, 12 * scaling, 11 * scaling,
+          `p=${job.profit || 0}`, step.currentJob === job.id, (step.collisionJobs || []).includes(job.id));
       });
 
-      // 2. Sorted (pending) jobs — normal + current, not yet assigned or discarded
-      const pendingJobs = jobsArr.filter(j => !j.assignedSlot && j.visualState !== "discarded");
+      // 2. Sorted (pending) jobs
+      const pendingJobs = jobsArr.filter(j => j && !j.assignedSlot && j.visualState !== "discarded");
       if (pendingJobs.length > 0) {
-        const pTotalW = pendingJobs.length * cardW + (pendingJobs.length - 1) * gapX;
-        const pRowX = Math.max(22, Math.floor((1050 - pTotalW) / 2));
-        // Header fixed at left edge — never moves with the cards
-        svg.appendChild(textNode(34, 218,
-          state.disableSorting ? "Jobs in Input Order (Sorting Disabled)" : "Sorted Jobs (by profit)",
-          16, ac, "700", "Avenir Next"));
+        const pTotalW = pendingJobs.length * cardW + Math.max(0, (pendingJobs.length - 1) * gapX);
+        const pRowX = Math.max(22, Math.floor((width - pTotalW) / 2));
+        const headerY = Math.max(210, conf.pendingY * scaling);
+        
+        const jobsLabel = state.disableSorting ? "Jobs in Input Order (Sorting Disabled)" : "Sorted Jobs (by profit)";
+        svg.appendChild(textNode(34, headerY, jobsLabel, 16 * scaling, ac, "700", "Avenir Next"));
+        
         pendingJobs.forEach((job, i) => {
           const color = job.visualState === "current" ? COLORS.currentJob : COLORS.normalJob;
-          mkCard(job, pRowX + i * (cardW + gapX), 230, cardW, cardH, color, 14, 13,
-            `p=${job.profit}, d=${job.deadline}`, step.currentJob === job.id, step.collisionJobs.includes(job.id));
+          mkCard(job, pRowX + i * (cardW + gapX), headerY + conf.headOffset, cardW, cardH, color, 14 * scaling, 13 * scaling,
+            `p=${job.profit || 0},d=${job.deadline || 0}`, step.currentJob === job.id, (step.collisionJobs || []).includes(job.id));
         });
       }
 
-      // 3. Discarded jobs — separate labeled section
-      const discardedArr = jobsArr.filter(j => j.visualState === "discarded");
+      // 3. Discarded jobs
+      const discardedArr = jobsArr.filter(j => j && j.visualState === "discarded");
       if (discardedArr.length > 0) {
-        const dTotalW = discardedArr.length * cardW + (discardedArr.length - 1) * gapX;
-        const dRowX = Math.max(22, Math.floor((1050 - dTotalW) / 2));
-        svg.appendChild(textNode(34, 318, "Discarded Jobs", 16, COLORS.discardedJob, "700", "Avenir Next"));
+        const dTotalW = discardedArr.length * cardW + Math.max(0, (discardedArr.length - 1) * gapX);
+        const dRowX = Math.max(22, Math.floor((width - dTotalW) / 2));
+        const discardY = Math.max(305, conf.discardY * scaling);
+        
+        svg.appendChild(textNode(34, discardY, "Discarded Jobs", 16 * scaling, COLORS.discardedJob, "700", "Avenir Next"));
         discardedArr.forEach((job, i) => {
-          mkCard(job, dRowX + i * (cardW + gapX), 330, cardW, cardH, COLORS.discardedJob, 14, 13,
-            `p=${job.profit}, d=${job.deadline}`, false, step.collisionJobs.includes(job.id));
+          mkCard(job, dRowX + i * (cardW + gapX), discardY + conf.headOffset, cardW, cardH, COLORS.discardedJob, 14 * scaling, 13 * scaling,
+            `p=${job.profit || 0},d=${job.deadline || 0}`, false, (step.collisionJobs || []).includes(job.id));
         });
       }
 
-      svg.appendChild(textNode(34, 430, state.disableSorting ? "Pointers: i = current job in input order, t = slot pointer scanning backward" : "Pointers: i = current job in sorted order, t = slot pointer scanning backward", 12, footerC, "400", "Courier New"));
+      // Footer text
+      const footerText = state.disableSorting 
+        ? "Pointers: i = current job in input order, t = slot pointer scanning backward" 
+        : "Pointers: i = current job in sorted order, t = slot pointer scanning backward";
+      svg.appendChild(textNode(34, height - 10, footerText, 12 * scaling, footerC, "400", "Courier New"));
     }
 
     function rectNode(x, y, w, h, fill, stroke, r = 0, sw = 2) {
@@ -1822,6 +2285,12 @@
 
     function nextStep() {
       if (!state.steps.length) return;
+      // Show history on first step
+      if (el.historySection.style.display === "none") {
+        renderHistory();
+      } else {
+        markHistoryRow(state.currentStep);
+      }
       if (state.currentStep < state.steps.length - 1) {
         state.currentStep += 1;
         renderStep();
@@ -1841,6 +2310,10 @@
 
     function play() {
       if (!state.steps.length) return;
+      // Show history on first play
+      if (el.historySection.style.display === "none") {
+        renderHistory();
+      }
       if (state.currentStep >= state.steps.length - 1) {
         state.currentStep = 0;
         renderStep();
@@ -1871,6 +2344,8 @@
     function resetAll() {
       stopPlay();
       state.currentStep = 0;
+      // Always hide history on reset
+      el.historySection.style.display = "none";
       if (state.steps.length) {
         setStatus("Ready");
         renderStep();
@@ -1886,18 +2361,25 @@
         el.stepExplain.textContent = "Build steps to begin.";
         el.vizSvg.innerHTML = "";
         renderSchedulingOrder(null);
-        renderHistory();
       }
     }
 
     function renderHistory() {
-      const rows = state.steps.slice(Math.max(0, state.steps.length - 30));
-      const offset = Math.max(0, state.steps.length - 30);
+      // Hide history section if there are no steps
+      if (!state.steps || state.steps.length === 0) {
+        el.historySection.style.display = "none";
+        return;
+      }
+      // Show history section when there are steps
+      el.historySection.style.display = "block";
+      
+      const rows = (state.steps || []);
+      const offset = 0;
       el.historyBody.innerHTML = rows.map((step, localIdx) => {
         const idx = offset + localIdx;
-        const h = step.history;
+        const h = (step && step.history) ? step.history : { action: "-", job: "-", slot: "-", profit: 0 };
         const rowCls = (() => {
-          const a = h.action.toLowerCase();
+          const a = (h.action || "").toLowerCase();
           if (a.includes("assign")) return "row-assign";
           if (a.includes("discard")) return "row-discard";
           if (a.includes("sort") || a.includes("init") || a.includes("return")) return "row-sort";
@@ -1906,10 +2388,10 @@
         return `
           <tr data-step="${idx}" class="${rowCls}">
             <td>${idx + 1}</td>
-            <td>${h.action}</td>
-            <td>${h.job}</td>
-            <td>${h.slot}</td>
-            <td>${h.profit}</td>
+            <td>${(h.action || "-").substring(0, 20)}</td>
+            <td>${(h.job || "-").substring(0, 10)}</td>
+            <td>${(String(h.slot || "-")).substring(0, 8)}</td>
+            <td>${h.profit || 0}</td>
           </tr>
         `;
       }).join("");
@@ -1931,92 +2413,142 @@
       }
 
       const lastStep = state.steps[state.steps.length - 1];
-      const ctr = lastStep.counters;
+      const ctr = lastStep.counters || { sortCmp: 0, slotChecks: 0, assignments: 0, discarded: 0 };
       const n = state.rawJobs.length;
-      const totalProfit = lastStep.history.profit;
-      const edf = state.edf;
-      const unsorted = state.unsortedProfit;
+      const totalProfit = lastStep.history ? lastStep.history.profit : 0;
+      const edf = state.edf || 0;
+      const unsorted = state.unsortedProfit || 0;
 
       // Build job assignment narrative
       const assigned = [];
       const discarded = [];
-      for (const [id, job] of Object.entries(lastStep.jobs)) {
-        if (job.visualState === "assigned") assigned.push(job);
-        else if (job.visualState === "discarded") discarded.push(job);
+      for (const [id, job] of Object.entries(lastStep.jobs || {})) {
+        if (job && job.visualState === "assigned") assigned.push(job);
+        else if (job && job.visualState === "discarded") discarded.push(job);
       }
       assigned.sort((a, b) => (a.assignedSlot || 0) - (b.assignedSlot || 0));
 
       const schedSentences = assigned.map(
-        (j) => `<strong>${j.id}</strong> (profit&nbsp;${j.profit}, deadline&nbsp;${j.deadline}) went into slot&nbsp;${j.assignedSlot}`
+        (j) => `<strong>${j.id || "?"}</strong> (profit&nbsp;${j.profit || 0}, deadline&nbsp;${j.deadline || 0}) went into slot&nbsp;${j.assignedSlot || 0}`
       );
       const discardSentences = discarded.map(
-        (j) => `<strong>${j.id}</strong> (profit&nbsp;${j.profit})`
+        (j) => `<strong>${j.id || "?"}</strong> (profit&nbsp;${j.profit || 0})`
       );
 
-      let schedNarrative = `You gave the algorithm <strong>${n} job${n !== 1 ? "s" : ""}</strong>. ` +
-        `After sorting by profit from highest to lowest, it worked through each job one at a time and tried to place it into ` +
-        `the <em>latest available slot</em> before its deadline.<br><br>`;
+      let schedNarrative = `You gave the algorithm <strong>${n} job${n !== 1 ? "s" : ""}</strong>. `;
+      if (!state.disableSorting) {
+        schedNarrative += `After sorting by profit from highest to lowest, `;
+      } else {
+        schedNarrative += `<span class="nt-warn">⚠️ Without sorting (input order)</span>, `;
+      }
+      schedNarrative += `it worked through each job one at a time and tried to place it into the <em>latest available slot</em> before its deadline.<br><br>`;
 
-      if (assigned.length) {
+      if (assigned.length > 0) {
         schedNarrative += `<span class="nt-good">${assigned.length} job${assigned.length !== 1 ? "s" : ""} were scheduled:</span> ` +
           schedSentences.join(", ") + ". ";
       }
-      if (discarded.length) {
+      if (discarded.length > 0) {
         schedNarrative += `<span class="nt-warn">${discarded.length} job${discarded.length !== 1 ? "s" : ""} were discarded</span> because every slot before their deadline was already taken: ` +
           discardSentences.join(", ") + ". ";
+      }
+      if (assigned.length === 0 && discarded.length === 0) {
+        schedNarrative += "No jobs were scheduled (all had conflicting deadlines or invalid parameters). ";
       }
       schedNarrative += `The total profit collected was <span class="nt-acc">${totalProfit}</span>.`;
 
       // Greedy vs alternatives
       let compNarrative = "";
-      if (totalProfit > edf) {
-        compNarrative = `Compared to Earliest-Deadline-First (which would have earned <span class="nt-warn">${edf}</span>), ` +
-          `the greedy approach did <span class="nt-good">${totalProfit - edf} better</span>. This is because EDF prioritises urgency over value &mdash; ` +
-          `it can waste a slot on a low-profit job just because that job\'s deadline is tight.`;
-      } else if (totalProfit === edf) {
-        compNarrative = `On this particular input, both greedy and EDF produced the same profit (<span class="nt-acc">${totalProfit}</span>). ` +
-          `This can happen when high-profit jobs also happen to have early deadlines. Try Preset D to see a case where they differ.`;
+      if (state.sortedProfit > 0 && edf > 0) {
+        if (state.disableSorting) {
+          if (state.sortedProfit > edf) {
+            compNarrative = `Compared to Earliest-Deadline-First (which earns <span class="nt-info">${edf}</span>), the standard Greedy approach earns <span class="nt-good">${state.sortedProfit}</span>. `;
+          } else {
+            compNarrative = `Compared to Earliest-Deadline-First (which earns <span class="nt-info">${edf}</span>), the standard Greedy approach earns <span class="nt-acc">${state.sortedProfit}</span>. `;
+          }
+        } else {
+          if (totalProfit > edf) {
+            compNarrative = `Compared to Earliest-Deadline-First (which would have earned <span class="nt-warn">${edf}</span>), ` +
+              `the greedy approach did <span class="nt-good">${totalProfit - edf} better</span>. This is because EDF prioritises urgency over value &mdash; ` +
+              `it can waste a slot on a low-profit job just because that job's deadline is tight.`;
+          } else if (totalProfit === edf) {
+            compNarrative = `On this particular input, both greedy and EDF produced the same profit (<span class="nt-acc">${totalProfit}</span>). ` +
+              `This can happen when high-profit jobs also happen to have early deadlines. Try Preset D to see a case where they differ.`;
+          } else {
+            compNarrative = `On this input, EDF actually matched or beat greedy (<span class="nt-info">${edf}</span> vs <span class="nt-acc">${totalProfit}</span>). ` +
+              `This is unusual &mdash; it means the high-profit jobs also had early deadlines, so sorting by profit vs by deadline gave similar results.`;
+          }
+        }
+
+        if (unsorted !== state.sortedProfit) {
+          const diff = state.sortedProfit - unsorted;
+          if (state.disableSorting) {
+            compNarrative += ` You ran the jobs in input order (without sorting), yielding <span class="nt-warn">${unsorted}</span>. Had you used the standard Greedy sorted approach, you would have made <span class="nt-good">${state.sortedProfit}</span> &mdash; a difference of <span class="nt-info">${Math.abs(diff)}</span>.`;
+          } else {
+            compNarrative += ` If you had run the jobs in input order without sorting, the profit would have been <span class="nt-warn">${unsorted}</span> &mdash; ` +
+              `a ${diff > 0 ? 'loss' : 'gain'} of <span class="nt-warn">${Math.abs(diff)}</span> profit units. That is why the sort step ${diff > 0 ? 'matters' : 'was redundant'}.`;
+          }
+        } else {
+          if (state.disableSorting) {
+            compNarrative += ` Interestingly, running without sorting yielded the same profit (<span class="nt-info">${unsorted}</span>) as the sorted approach on this input &mdash; the input order happened to be already optimal.`;
+          } else {
+            compNarrative += ` Interestingly, running without sorting would give the same result (<span class="nt-info">${unsorted}</span>) on this input &mdash; the order happened to be already optimal.`;
+          }
+        }
       } else {
-        compNarrative = `On this input, EDF actually matched or beat greedy (<span class="nt-info">${edf}</span> vs <span class="nt-acc">${totalProfit}</span>). ` +
-          `This is unusual &mdash; it means the high-profit jobs also had early deadlines, so sorting by profit vs by deadline gave similar results.`;
+        compNarrative = "Insufficient data for algorithm comparison.";
       }
 
-      if (unsorted !== totalProfit) {
-        compNarrative += ` If you had run the jobs in input order without sorting, the profit would have been <span class="nt-warn">${unsorted}</span> &mdash; ` +
-          `a loss of <span class="nt-warn">${totalProfit - unsorted}</span> profit units. That is why the sort step matters.`;
-      } else {
-        compNarrative += ` Interestingly, running without sorting would give the same result (<span class="nt-info">${unsorted}</span>) on this input &mdash; the order happened to be already optimal.`;
+      // Brute force optimal (for small n)
+      let optimalNarrative = "";
+      if (n <= 12) {
+        const optimalProfit = calculateOptimalBruteForce(state.rawJobs);
+        if (optimalProfit !== null) {
+          if (!state.disableSorting) {
+            if (totalProfit === optimalProfit) {
+              optimalNarrative = `<br><br><span class="nt-good">✓ Optimality Verified:</span> Brute-force search confirms that greedy's profit of <strong>${totalProfit}</strong> is <strong>optimal</strong> &mdash; no other subset of jobs could earn more.`;
+            } else {
+              optimalNarrative = `<br><br><span class="nt-warn">⚠️ Suboptimal:</span> Brute-force optimal is <strong>${optimalProfit}</strong>, but greedy only achieved <strong>${totalProfit}</strong> (difference: ${optimalProfit - totalProfit}). This can happen with specific deadline/profit combinations.`;
+            }
+          } else {
+            optimalNarrative = `<br><br><em>Note:</em> With sorting disabled, this is not the standard Greedy algorithm. Brute-force optimal is <strong>${optimalProfit}</strong> for reference (current: ${totalProfit}).`;
+          }
+        }
       }
 
       // Complexity narrative
-      const sortCmp = ctr.sortCmp;
-      const slotChecks = ctr.slotChecks;
-      const totalOps = sortCmp + slotChecks + ctr.assignments;
-      const theoretical = Math.round(n * Math.log2(Math.max(n, 2)) + n * n);
+      const sortCmp = ctr.sortCmp || 0;
+      const slotChecks = ctr.slotChecks || 0;
+      const totalOps = sortCmp + slotChecks + (ctr.assignments || 0);
+      const theoretical = totalOps > 0 ? Math.round(n * Math.log2(Math.max(n, 2)) + n * n) : 0;
       const ratio = totalOps > 0 ? (theoretical / totalOps).toFixed(1) : "N/A";
 
-      let complexNarrative = `The algorithm touched <span class="nt-acc">${totalOps} operations</span> in total. ` +
-        `Breaking that down: the sorting step made <span class="nt-info">${sortCmp} comparison${sortCmp !== 1 ? "s" : ""}</span> ` +
-        `to put the jobs in profit order, and the slot-search loop ran <span class="nt-info">${slotChecks} slot check${slotChecks !== 1 ? "s" : ""}</span> ` +
-        `across all jobs.<br><br>`;
+      let complexNarrative = "";
+      if (totalOps > 0) {
+        complexNarrative = `The algorithm touched <span class="nt-acc">${totalOps} operations</span> in total. ` +
+          `Breaking that down: the sorting step made <span class="nt-info">${sortCmp} comparison${sortCmp !== 1 ? "s" : ""}</span> ` +
+          `to put the jobs in profit order, and the slot-search loop ran <span class="nt-info">${slotChecks} slot check${slotChecks !== 1 ? "s" : ""}</span> ` +
+          `across all jobs.<br><br>`;
 
-      if (slotChecks <= n) {
-        complexNarrative += `With only <strong>${slotChecks}</strong> slot checks for ${n} jobs, you\'re seeing the <span class="nt-good">near-best case</span>: ` +
-          `most jobs found a free slot on the first try. The slot-search cost was essentially O(n).`;
-      } else if (slotChecks > n * (n - 1) / 3) {
-        complexNarrative += `With <strong>${slotChecks}</strong> slot checks for ${n} jobs, you\'re close to the <span class="nt-warn">worst case</span>. ` +
-          `Jobs had to scan many occupied slots before finding a free one (or failing). This is the O(n&sup2;) slot-search behaviour. Load Preset C to see the maximum.`;
+        if (slotChecks <= n) {
+          complexNarrative += `With only <strong>${slotChecks}</strong> slot checks for ${n} jobs, you're seeing the <span class="nt-good">near-best case</span>: ` +
+            `most jobs found a free slot on the first try. The slot-search cost was essentially O(n).`;
+        } else if (slotChecks > n * (n - 1) / 3) {
+          complexNarrative += `With <strong>${slotChecks}</strong> slot checks for ${n} jobs, you're close to the <span class="nt-warn">worst case</span>. ` +
+            `Jobs had to scan many occupied slots before finding a free one (or failing). This is the O(n&sup2;) slot-search behaviour. Load Preset C to see the maximum.`;
+        } else {
+          complexNarrative += `With <strong>${slotChecks}</strong> slot checks for ${n} jobs, you're seeing a <span class="nt-acc">typical middle-ground</span>. ` +
+            `Some jobs needed to search past occupied slots, but none had to scan all the way back to slot 1.`;
+        }
+        complexNarrative += ` The theoretical O(n log n + n&sup2;) bound for n=${n} is ~${theoretical} ops; ` +
+          `actual was ${totalOps} &mdash; a factor of ~${ratio}x under the ceiling.`;
       } else {
-        complexNarrative += `With <strong>${slotChecks}</strong> slot checks for ${n} jobs, you\'re seeing a <span class="nt-acc">typical middle-ground</span>. ` +
-          `Some jobs needed to search past occupied slots, but none had to scan all the way back to slot 1.`;
+        complexNarrative = "No operations recorded yet.";
       }
-      complexNarrative += ` The theoretical O(n log n + n&sup2;) bound for n=${n} is ~${theoretical} ops; ` +
-        `actual was ${totalOps} &mdash; a factor of ~${ratio}x under the ceiling.`;
 
       el.narrativePanel.innerHTML = `
         <div class="narrative-block">
           <div class="narrative-label">&#x1F4CB; Greedy Scheduling</div>
-          <div class="narrative-text">${schedNarrative}</div>
+          <div class="narrative-text">${schedNarrative}${optimalNarrative}</div>
         </div>
         <hr class="narrative-divider">
         <div class="narrative-block">
@@ -2032,23 +2564,23 @@
     }
 
     function updateImpactPanels() {
-      if (!state.rawJobs.length) {
+      if (!state.rawJobs.length || !state.steps.length) {
         el.sortingImpact.textContent = "Build steps first.";
         el.paradigmCompare.textContent = "Build steps first.";
         return;
       }
 
-      const greedy = state.steps[state.steps.length - 1].history.profit;
-      const unsorted = state.unsortedProfit;
-      const edf = state.edf;
-      const sortedProfit = state.sortedProfit;
+      const greedy = state.greedyProfit || 0;
+      const unsorted = state.unsortedProfit || 0;
+      const edf = state.edf || 0;
+      const sortedProfit = state.sortedProfit || greedy;
       const currentMode = state.disableSorting ? "Input-order mode (sorting disabled)" : "Greedy sorted mode";
 
       const impactText = [
         `Current run mode: ${currentMode}; profit = ${greedy}.`,
         `Greedy sorted baseline profit = ${sortedProfit}.`,
         `Without sorting (input order): profit = ${unsorted}.`,
-        `Change caused by sorting = ${sortedProfit - unsorted} profit units.`
+        `Change caused by sorting = ${Math.abs(sortedProfit - unsorted)} profit units.`
       ].join(" ");
 
       el.sortingImpact.innerHTML = impactText;
@@ -2058,8 +2590,8 @@
         `Greedy sorted profit = ${sortedProfit}.`,
         `Earliest-Deadline-First heuristic profit = ${edf}.`,
         sortedProfit >= edf
-          ? `Greedy paradigm is better by ${sortedProfit - edf} on this input.`
-          : `EDF happened to win by ${edf - sortedProfit} on this input.`
+          ? `Greedy paradigm is better by ${Math.abs(sortedProfit - edf)} on this input.`
+          : `EDF happened to win by ${Math.abs(edf - sortedProfit)} on this input.`
       ].join(" ");
 
       el.paradigmCompare.innerHTML = compare;
@@ -2090,13 +2622,14 @@
       }
       // EDF: sort by deadline ascending, assign to earliest free slot
       const arr = [...jobs].sort((a, b) => a.deadline - b.deadline || b.profit - a.profit);
-      const D = Math.max(...arr.map((j) => j.deadline));
-      const slots = Array(D + 1).fill(null);
+      const maxDeadline = Math.max(...arr.map((j) => j.deadline), 0);
+      let slots = new Array(maxDeadline).fill(null);
       let ops = Math.ceil(n * Math.log2(n + 1)); // sort cost
       for (const job of arr) {
-        for (let t = 1; t <= Math.min(D, job.deadline); t += 1) {
+        let d = Math.min(job.deadline, slots.length);
+        for (let j = 0; j < d; j++) {
           ops += 1;
-          if (!slots[t]) { slots[t] = job; break; }
+          if (!slots[j]) { slots[j] = job; break; }
         }
       }
       return ops;
@@ -2106,7 +2639,9 @@
       const svg = el.growthSvg;
       svg.innerHTML = "";
 
-      const maxN = Number(el.growthN.value);
+      if (!svg || !el.growthN) return;
+
+      const maxN = Number(el.growthN.value) || 30;
       el.growthNLabel.textContent = String(maxN);
 
       const points = [];
@@ -2117,22 +2652,25 @@
       for (let n = 4; n <= maxN; n += 2) {
         points.push([n, simulateOpsForN(n)]);
         edfPoints.push([n, simulateEDFOpsForN(n)]);
-        theoGreedy.push([n, n * Math.log2(n) + n * n]);
+        theoGreedy.push([n, n * Math.log2(Math.max(n, 2)) + n * n]);
         if (n <= 22) theoAlt.push([n, Math.pow(2, n)]);
       }
 
-      // Base Y scale on greedy + EDF + theoretical curve; 2^n intentionally exits the chart boundary
-      const allY = points.concat(edfPoints).concat(theoGreedy).map((p) => p[1]);
-      const maxY = Math.max(...allY);
-      const minY = 0;
-      const W = 1050;
-      const H = 250;
-      const left = 60;
-      const right = 20;
-      const top = 16;
-      const bottom = 42;
+      // Calculate axes based on viewBox
+      const viewBox = svg.viewBox.baseVal;
+      const W = viewBox.width || 1050;
+      const H = viewBox.height || 250;
+      const left = Math.max(48, W * 0.057);
+      const right = Math.max(12, W * 0.02);
+      const top = Math.max(12, H * 0.064);
+      const bottom = Math.max(32, H * 0.168);
       const plotW = W - left - right;
       const plotH = H - top - bottom;
+
+      // Base Y scale on visible greedy + EDF
+      const visibleY = points.concat(edfPoints).concat(theoGreedy).map((p) => p[1]);
+      const maxY = visibleY.length > 0 ? Math.max(...visibleY) : 1000;
+      const minY = 0;
 
       function sx(x) {
         return left + ((x - 4) / (maxN - 4 || 1)) * plotW;
@@ -2142,14 +2680,21 @@
         return top + plotH - ((y - minY) / (maxY - minY || 1)) * plotH;
       }
 
+      // Grid lines
       for (let g = 0; g <= 5; g += 1) {
         const gy = top + (g / 5) * plotH;
         const line = rectNode(left, gy, plotW, 1, "#1e1e1e", "#1e1e1e", 0, 0);
         svg.appendChild(line);
       }
 
-      svg.appendChild(textNode(18, top + 8, "ops", 12, "#9c9c9c", "600", "Courier New"));
-      svg.appendChild(textNode(W / 2, H - 10, "n (number of jobs)", 12, "#9c9c9c", "600", "Courier New", "middle"));
+      const axisFontSize = Math.max(10, W * 0.011);
+      svg.appendChild(textNode(left * 0.3, top + 8, "ops", 12, "#9c9c9c", "600", "Courier New"));
+      svg.appendChild(textNode(W / 2, H - bottom * 0.3, "n (number of jobs)", axisFontSize, "#9c9c9c", "600", "Courier New", "middle"));
+
+      // Axis Data Labels
+      svg.appendChild(textNode(left - 8, top + 4, String(Math.round(maxY)), axisFontSize, "#9c9c9c", "400", "Courier New", "end"));
+      svg.appendChild(textNode(left - 8, top + plotH + 4, "0", axisFontSize, "#9c9c9c", "400", "Courier New", "end"));
+      svg.appendChild(textNode(sx(maxN), H - bottom + 16, String(maxN), axisFontSize, "#9c9c9c", "400", "Courier New", "middle"));
 
       const axisX = rectNode(left, H - bottom, plotW, 2, "#484848", "#484848", 0, 0);
       const axisY = rectNode(left, top, 2, plotH, "#484848", "#484848", 0, 0);
@@ -2178,13 +2723,21 @@
         svg.appendChild(rectNode(sx(p[0]) - 2, sy(p[1]) - 2, 4, 4, "#ff9f43", "#ff9f43", 1, 0));
       });
 
-      const legendY = 20;
       const isLightChart = document.body.classList.contains('light');
-      svg.appendChild(rectNode(560, legendY - 10, 470, 74, isLightChart ? "#f8fafc" : "#0e0e0e", isLightChart ? "#e2e8f0" : "#2c2c2c", 8, 1));
-      svg.appendChild(textNode(575, legendY + 8, "Blue: Greedy actual ops", 12, "#4dabf7", "600", "Avenir Next"));
-      svg.appendChild(textNode(575, legendY + 25, "Orange: EDF actual ops (comparison)", 12, "#ff9f43", "600", "Avenir Next"));
-      svg.appendChild(textNode(575, legendY + 42, "Green dashed: O(n log n + n\u00b2) theoretical", 12, "#42d392", "600", "Avenir Next"));
-      svg.appendChild(textNode(575, legendY + 59, "Red dashed: 2\u207f brute force (exits chart n>22)", 12, "#ff6b6b", "600", "Avenir Next"));
+      const legendX = Math.max(left, W * 0.53);
+      const legendY = top + H * 0.08;
+      const legendW = Math.min(470, W * 0.42);
+      const legendH = 74;
+      
+      svg.appendChild(rectNode(legendX, legendY - 10, legendW, legendH, isLightChart ? "#f8fafc" : "#0e0e0e", isLightChart ? "#e2e8f0" : "#2c2c2c", 8, 1));
+      
+      const legendFontSize = Math.max(10, W * 0.012);
+      const lineHeight = legendH * 0.23;
+      
+      svg.appendChild(textNode(legendX + 15, legendY + 6, "Blue: Greedy actual ops", legendFontSize, "#4dabf7", "600", "Avenir Next"));
+      svg.appendChild(textNode(legendX + 15, legendY + lineHeight + 6, "Orange: EDF actual ops (comparison)", legendFontSize, "#ff9f43", "600", "Avenir Next"));
+      svg.appendChild(textNode(legendX + 15, legendY + 2 * lineHeight + 6, "Green dashed: O(n log n + n\u00b2) theoretical", legendFontSize, "#42d392", "600", "Avenir Next"));
+      svg.appendChild(textNode(legendX + 15, legendY + 3 * lineHeight + 6, "Red dashed: 2\u207f brute force (exits chart early)", legendFontSize, "#ff6b6b", "600", "Avenir Next"));
     }
 
     function attachEvents() {
@@ -2202,6 +2755,12 @@
         setStatus("Paused");
       });
       el.resetBtn.addEventListener("click", resetAll);
+
+      el.clearBtn.addEventListener("click", () => {
+        el.jobsInput.value = "";
+        setActivePreset(null);
+        resetAll();
+      });
 
       el.speedRange.addEventListener("input", () => {
         state.speed = Number(el.speedRange.value);
@@ -2243,6 +2802,8 @@
 
       el.disableSorting.addEventListener("change", () => {
         state.disableSorting = el.disableSorting.checked;
+        document.getElementById("modeIndicator").style.display = state.disableSorting ? "block" : "none";
+        document.getElementById("warningBanner").classList.toggle("show", state.disableSorting);
         if (state.steps.length) {
           build();
         }
@@ -2278,6 +2839,49 @@
       });
     }
 
+    function initResizer() {
+      const resizerContainer = document.getElementById("resizerContainer");
+      const page = document.querySelector(".page");
+      if (!resizerContainer || !page) return;
+
+      let isDragging = false;
+      let dragRAF = null;
+
+      resizerContainer.addEventListener("mousedown", () => {
+        isDragging = true;
+        resizerContainer.classList.add("dragging");
+        document.body.style.cursor = "col-resize";
+        document.body.style.userSelect = "none";
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        if (dragRAF) cancelAnimationFrame(dragRAF);
+        dragRAF = requestAnimationFrame(() => {
+          const pageRect = page.getBoundingClientRect();
+          let newWidth = Math.max(260, Math.min(e.clientX - pageRect.left, pageRect.width * 0.7));
+          page.style.setProperty("--left-w", `${newWidth}px`);
+        });
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (isDragging) {
+          isDragging = false;
+          resizerContainer.classList.remove("dragging");
+          document.body.style.cursor = "";
+          document.body.style.userSelect = "";
+        }
+      });
+
+      const ro = new ResizeObserver(debounce(() => {
+        if (state.steps.length) {
+          renderViz(state.steps[state.currentStep]);
+        }
+        renderGrowthChart();
+      }, 50));
+      ro.observe(page);
+    }
+
     function debounce(fn, ms) {
       let t;
       return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
@@ -2299,6 +2903,7 @@
     function init() {
       addPseudoPanel();
       attachEvents();
+      initResizer();
       setStatus("Idle");
       renderSchedulingOrder(null);
       renderGrowthChart();
